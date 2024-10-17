@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem, ListItemText, useMediaQuery, useTheme } from '@mui/material';
-import { Menu as MenuIcon, Brightness4 as MoonIcon, Brightness7 as SunIcon } from '@mui/icons-material';
+import { Menu as MenuIcon, Brightness2 as MoonIcon, LightMode as SunIcon } from '@mui/icons-material';
 import Link from 'next/link';
 import { useColorMode } from '../providers';
 
@@ -17,8 +17,16 @@ const Header = () => {
     { text: 'About', href: '/about' },
   ];
 
+  /**
+   * @param {boolean} open
+   * @returns {(event: React.KeyboardEvent | React.MouseEvent | undefined) => void}
+   */
   const toggleDrawer = (open) => (event) => {
-    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+    if (
+      event &&
+      event.type === 'keydown' &&
+      (event.key === 'Tab' || event.key === 'Shift')
+    ) {
       return;
     }
     setDrawerOpen(open);
@@ -35,6 +43,14 @@ const Header = () => {
         <ListItem button key="login">
           <ListItemText primary="Login" />
         </ListItem>
+        {isMobile && (
+          <ListItem button key="theme-toggle" onClick={() => { toggleColorMode(); toggleDrawer(false)(); }}>
+            {/* <ListItemText primary={`Switch to ${theme.palette.mode === 'dark' ? 'Light' : 'Dark'} Mode`} /> */}
+            <IconButton color="inherit">
+              {theme.palette.mode === 'dark' ? <SunIcon /> : <MoonIcon />}
+            </IconButton>
+          </ListItem>
+        )}
       </List>
     </Drawer>
   );
@@ -66,11 +82,11 @@ const Header = () => {
               </Button>
             ))}
             <Button color="inherit">Login</Button>
+            <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
+              {theme.palette.mode === 'dark' ? <SunIcon /> : <MoonIcon />}
+            </IconButton>
           </>
         )}
-        <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
-          {theme.palette.mode === 'dark' ? <SunIcon /> : <MoonIcon />}
-        </IconButton>
       </Toolbar>
     </AppBar>
   );
