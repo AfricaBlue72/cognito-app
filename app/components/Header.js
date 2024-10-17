@@ -17,10 +17,6 @@ const Header = () => {
     { text: 'About', href: '/about' },
   ];
 
-  /**
-   * @param {boolean} open
-   * @returns {(event: React.KeyboardEvent | React.MouseEvent | undefined) => void}
-   */
   const toggleDrawer = (open) => (event) => {
     if (
       event &&
@@ -40,12 +36,11 @@ const Header = () => {
             <ListItemText primary={item.text} />
           </ListItem>
         ))}
-        <ListItem button key="login">
+        <ListItem button key="login" component={Link} href="/login" onClick={toggleDrawer(false)}>
           <ListItemText primary="Login" />
         </ListItem>
         {isMobile && (
           <ListItem button key="theme-toggle" onClick={() => { toggleColorMode(); toggleDrawer(false)(); }}>
-            {/* <ListItemText primary={`Switch to ${theme.palette.mode === 'dark' ? 'Light' : 'Dark'} Mode`} /> */}
             <IconButton color="inherit">
               {theme.palette.mode === 'dark' ? <SunIcon /> : <MoonIcon />}
             </IconButton>
@@ -81,7 +76,7 @@ const Header = () => {
                 {item.text}
               </Button>
             ))}
-            <Button color="inherit">Login</Button>
+            <Button color="inherit" component={Link} href="/login">Login</Button>
             <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
               {theme.palette.mode === 'dark' ? <SunIcon /> : <MoonIcon />}
             </IconButton>
