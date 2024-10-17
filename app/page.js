@@ -25,7 +25,7 @@ export default function Home() {
         >
           Welcome to My Website
         </Typography>
-        <Typography variant="h5" align="center" color="text.secondary" paragraph>
+        <Typography variant="h5" align="center" color="text.secondary">
           Discover amazing content and services tailored just for you. We're here to make your online experience better.
         </Typography>
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>

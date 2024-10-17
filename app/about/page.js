@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Container, Typography, Grid, Paper } from '@mui/material';
+import { Box, Container, Typography, Paper } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 
 export default function About() {
   return (
@@ -15,7 +16,7 @@ export default function About() {
         <Typography variant="h2" align="center" gutterBottom>
           About Us
         </Typography>
-        <Typography variant="h5" align="center" color="text.secondary" paragraph>
+        <Typography variant="h5" align="center" color="text.secondary" >
           Learn more about our business, goals, and the team behind our success.
         </Typography>
         <Grid container spacing={4} sx={{ mt: 4 }}>

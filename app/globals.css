@@ -4,6 +4,7 @@
   --font-mono: ui-monospace, Menlo, Monaco, 'Cascadia Mono', 'Segoe UI Mono',
     'Roboto Mono', 'Oxygen Mono', 'Ubuntu Monospace', 'Source Code Pro',
     'Fira Mono', 'Droid Sans Mono', 'Courier New', monospace;
+  --dark-mode-text: #E6C200;
 }
 
 * {
@@ -35,8 +36,17 @@ a {
 
 /* Dark mode styles */
 @media (prefers-color-scheme: dark) {
-  html {
+  :root {
     color-scheme: dark;
+  }
+  
+  body, html {
+    color: var(--dark-mode-text);
+  }
+  
+  /* Ensure all text elements use the dark mode color */
+  p, h1, h2, h3, h4, h5, h6, span, div, li, a {
+    color: var(--dark-mode-text);
   }
 }
 
