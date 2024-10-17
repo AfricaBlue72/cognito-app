@@ -8,6 +8,10 @@ const ColorModeContext = createContext({ toggleColorMode: () => {} });
 
 export const useColorMode = () => useContext(ColorModeContext);
 
+// Define color variables
+const DARK_YELLOW = '#E6C200';
+const DARK_YELLOW_HOVER = 'rgba(255, 215, 0, 0.08)';
+
 export function Providers({ children }) {
   const [mode, setMode] = useState('light');
 
@@ -27,23 +31,23 @@ export function Providers({ children }) {
           mode,
           ...(mode === 'dark' && {
             text: {
-              primary: '#FFD700',
-              secondary: '#FFD700',
+              primary: DARK_YELLOW,
+              secondary: DARK_YELLOW,
             },
           }),
         },
         typography: {
           allVariants: {
-            color: mode === 'dark' ? '#FFD700' : 'inherit', // Dark yellow color in dark mode
+            color: mode === 'dark' ? DARK_YELLOW : 'inherit',
           },
         },
         components: {
           MuiButton: {
             styleOverrides: {
               root: {
-                color: mode === 'dark' ? '#FFD700' : 'inherit',
+                color: mode === 'dark' ? DARK_YELLOW : 'inherit',
                 '&:hover': {
-                  backgroundColor: mode === 'dark' ? 'rgba(255, 215, 0, 0.08)' : 'inherit',
+                  backgroundColor: mode === 'dark' ? DARK_YELLOW_HOVER : 'inherit',
                 },
               },
             },
@@ -51,9 +55,9 @@ export function Providers({ children }) {
           MuiIconButton: {
             styleOverrides: {
               root: {
-                color: mode === 'dark' ? '#FFD700' : 'inherit',
+                color: mode === 'dark' ? DARK_YELLOW : 'inherit',
                 '&:hover': {
-                  backgroundColor: mode === 'dark' ? 'rgba(255, 215, 0, 0.08)' : 'inherit',
+                  backgroundColor: mode === 'dark' ? DARK_YELLOW_HOVER : 'inherit',
                 },
               },
             },
