@@ -1,0 +1,7 @@
+To summarize:
+
+Use pnpm run dev for active development.
+Use pnpm run build followed by serve out when you want to test your static export locally.
+Run pnpm run build again whenever you make changes that you want to see in the static version.
+The contents of the out directory after running pnpm run build are what you'll upload to S3 or another static hosting service when you're ready to deploy.
+This workflow ensures that you can develop your Next.js app with all its dynamic features, while also being able to test and deploy it as a static site. If you have any more questions about this process or need help with any specific step, please feel free to ask.

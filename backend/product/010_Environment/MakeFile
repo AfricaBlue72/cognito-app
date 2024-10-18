@@ -1,0 +1,11 @@
+ProductName	= CognitoTest
+
+default: build deploy
+
+build:
+	@echo "Nothing to build"
+	
+deploy:
+	../../cicd/scripts/cfdeploy Environment.yaml --parameter ProductName=$(ProductName) --region eu-west-1  --stack-name $(ProductName)-environment-eu-west-1 
+	../../cicd/scripts/cfdeploy Environment.yaml --parameter ProductName=$(ProductName)	--region us-east-1  --stack-name $(ProductName)-environment-us-east-1
+	

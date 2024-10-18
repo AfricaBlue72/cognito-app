@@ -1,0 +1,47 @@
+# used by: CodeBuild in Build phase
+
+version: 0.2
+
+env:
+  variables:
+    WHATEVER: "whatever"
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12  # Higher not yet supported by build image
+      python: 3.8
+
+    commands:
+      - echo Changing shell scripts to 755...
+      - find . -name '*.sh' -exec chmod 755 {} ';'
+      - find cicd -name '*.js' -exec chmod 755 {} ';'
+      - find cicd -name '*.py' -exec chmod 755 {} ';'
+      - chmod 755 cicd/scripts/*
+      - echo Adding cicd/scripts to PATH...
+      - export PATH=$(pwd)/cicd/scripts:$PATH
+      - echo "Installing all the tools the Codebuilds may ever need..."
+      - pip3 install --upgrade pip
+      - aws codeartifact login --tool pip --repository hctools --domain hc --domain-owner 256928933720 --region eu-west-1
+      - pip3 install --root-user-action=ignore --upgrade hctools
+      - pip3 install --root-user-action=ignore --upgrade python-stripzip
+
+  build:
+    commands:
+      - echo Running Build...
+      - echo Changing role...
+      - . ./cicd/scripts/changerole.sh
+      - cd product
+      - make build
+
+  post_build:
+    commands:
+      - cd ${CODEBUILD_SRC_DIR}
+      - echo All zip files
+      - find . -name '*.zip' -o -name '*.ZIP'
+
+artifacts:
+  files:
+    - product/**/*
+    - cicd/**/*
+  discard-paths: no
