@@ -9,30 +9,29 @@ env:
 phases:
   install:
     runtime-versions:
-      nodejs: 12  # Higher not yet supported by build image
-      python: 3.8
+      nodejs: 20  
+      python: 3.10
 
     commands:
+      - ls -las
       - echo Changing shell scripts to 755...
       - find . -name '*.sh' -exec chmod 755 {} ';'
       - find cicd -name '*.js' -exec chmod 755 {} ';'
       - find cicd -name '*.py' -exec chmod 755 {} ';'
-      - chmod 755 cicd/scripts/*
-      - echo Adding cicd/scripts to PATH...
+      - chmod 755 backend/cicd/scripts/*
+      - echo Adding backend/cicd/scripts to PATH...
       - export PATH=$(pwd)/cicd/scripts:$PATH
-      - echo "Installing all the tools the Codebuilds may ever need..."
-      - pip3 install --upgrade pip
-      - aws codeartifact login --tool pip --repository hctools --domain hc --domain-owner 256928933720 --region eu-west-1
-      - pip3 install --root-user-action=ignore --upgrade hctools
-      - pip3 install --root-user-action=ignore --upgrade python-stripzip
+      - 
 
   build:
     commands:
       - echo Running Build...
       - echo Changing role...
-      - . ./cicd/scripts/changerole.sh
-      - cd product
-      - make build
+      # - . ./cicd/scripts/changerole.sh
+      - aws sts get-caller-identity
+      - cd backend/product
+      - ls -las
+      # - make build
 
   post_build:
     commands:
