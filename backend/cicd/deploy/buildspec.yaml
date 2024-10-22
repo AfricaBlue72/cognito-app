@@ -9,30 +9,36 @@ env:
 phases:
   install:
     runtime-versions:
-      nodejs: 12
-      python: 3.8
+      nodejs: 20
+      python: 3.10
 
     commands:
-      - echo Modifying all shell scripts to mode 755...
-      - find . -name "*.sh" -exec chmod 755 '{}' ';'
-      - echo Modifying all cicd nodejs scripts to mode 755...
-      - find cicd -name "*.js" -exec chmod 755 '{}' ';'
-      - find cicd -name '*.py' -exec chmod 755 {} ';'
-      - echo Adding cicd/scripts to PATH...
-      - export PATH=$(pwd)/cicd/scripts:$PATH
-      - echo "Installing all the tools the Codebuilds may ever need..."
-      - pip3 install --upgrade pip
-      - aws codeartifact login --tool pip --repository hctools --domain hc --domain-owner 256928933720 --region eu-west-1
-      - pip3 install --root-user-action=ignore --upgrade hctools
-      - pip3 install --root-user-action=ignore --upgrade python-stripzip
+      - ls -las
+      - echo Changing shell scripts to 755...
+      - find . -name '*.sh' -exec chmod 755 {} ';'
+      - find backend/cicd -name '*.js' -exec chmod 755 {} ';'
+      - find backend/cicd -name '*.py' -exec chmod 755 {} ';'
+      - chmod 755 backend/cicd/scripts/*
+      - echo Adding backend/cicd/scripts to PATH...
+      - export PATH=$(pwd)/backend/cicd/scripts:$PATH
+    
 
   build:
     commands:
       - echo Changing role...
-      - . ./cicd/scripts/changerole.sh
+      # - . ./cicd/scripts/changerole.sh
+      - aws sts get-caller-identity
       - echo Deploying...
-      - cd product
-      - ./deploy.sh
+      - cd backend/product
+      - ls -las
+      # - ./deploy.sh
+
+
+  post_build:
+    commands:
+      - cd ${CODEBUILD_SRC_DIR}
+      - echo All zip files
+      - find . -name '*.zip' -o -name '*.ZIP'
 
 artifacts:
   files:

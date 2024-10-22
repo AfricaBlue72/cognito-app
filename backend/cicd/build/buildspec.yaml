@@ -16,11 +16,11 @@ phases:
       - ls -las
       - echo Changing shell scripts to 755...
       - find . -name '*.sh' -exec chmod 755 {} ';'
-      - find cicd -name '*.js' -exec chmod 755 {} ';'
-      - find cicd -name '*.py' -exec chmod 755 {} ';'
+      - find backend/cicd -name '*.js' -exec chmod 755 {} ';'
+      - find backend/cicd -name '*.py' -exec chmod 755 {} ';'
       - chmod 755 backend/cicd/scripts/*
       - echo Adding backend/cicd/scripts to PATH...
-      - export PATH=$(pwd)/cicd/scripts:$PATH
+      - export PATH=$(pwd)/backend/cicd/scripts:$PATH
       - 
 
   build:
