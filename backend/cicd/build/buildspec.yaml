@@ -14,7 +14,7 @@ phases:
 
     commands:
       - echo Check wihch package manager is used
-      - which dnf yum apt
+      - which dnf yum apt || true
       - ls -las
       - echo Modifying cfdeploy to mode 755...
       - chmod u+x backend/cicd/scripts/cfdeploy
