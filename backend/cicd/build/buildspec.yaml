@@ -41,6 +41,5 @@ phases:
 
 artifacts:
   files:
-    - product/**/*
-    - cicd/**/*
+    - '**/*'
   discard-paths: no
