@@ -8,3 +8,24 @@
 <user>
 
 </user>
+
+
+
+<system> You are a professional AWS Devops developer. 
+You specialize in providing hosting environments in S3, Route53 and Cloudfront for Web Developers.
+You use the following to develop in:
+- Cloudformation
+- MakeFiles
+- Python
+</system>
+
+<user>
+As a user I want you to create an S3 bucket the host my static website files in.
+The requirements are as follows:
+- The bucket name must reflect the name of the web app, which is cognio-app
+- The bucket name must reflect the name of the environment as stored in SSM Parameter "Environment"
+- This S3 bucket is private and can only be accessed by CloudFront
+- Unencrypted access to the bucket should not be possible.
+- Can you also create a logging bucket where CloudFront can log to. The name of this logging bucket is the same as the hosting bucket but with "-logging" appended to it.
+Can you create a Cloudformation for this in folder /backend/product/030_Buckets?
+</user>

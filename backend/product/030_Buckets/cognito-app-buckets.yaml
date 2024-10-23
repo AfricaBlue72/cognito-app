@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: S3 buckets for hosting static website files and CloudFront logs
+
+Parameters:
+  Environment:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: Environment
+    Description: The environment name from SSM Parameter Store
+
+Resources:
+  WebsiteHostingBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "cognio-app-${Environment}-hosting"
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+
+  WebsiteHostingBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebsiteHostingBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowCloudFrontAccess
+            Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:GetObject
+            Resource: !Sub "${WebsiteHostingBucket.Arn}/*"
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/*"
+          - Sid: "DenyUnencryptedAccess"
+            Principal: "*"
+            Effect: "Deny"
+            Action: "s3:*"
+            Resource: 
+            - !GetAtt "WebsiteHostingBucket.Arn"
+            - !Join [ '', [ !GetAtt "WebsiteHostingBucket.Arn", '/*' ]]
+            Condition:
+              Bool: 
+                "aws:SecureTransport": false
+
+  LoggingBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "cognio-app-${Environment}-hosting-logging"
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+        - Id: AutoDelete
+          Status: Enabled
+          ExpirationInDays: 365
+
+Outputs:
+  WebsiteHostingBucketName:
+    Description: Name of the S3 bucket for website hosting
+    Value: !Ref WebsiteHostingBucket
+    Export:
+      Name: !Sub "${AWS::StackName}-WebsiteHostingBucketName"
+
+  LoggingBucketName:
+    Description: Name of the S3 bucket for CloudFront logs
+    Value: !Ref LoggingBucket
+    Export:
+      Name: !Sub "${AWS::StackName}-LoggingBucketName"
