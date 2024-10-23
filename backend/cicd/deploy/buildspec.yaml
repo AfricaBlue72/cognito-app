@@ -26,7 +26,7 @@ phases:
   build:
     commands:
       - echo Changing role...
-      # - . ./cicd/scripts/changerole.sh
+      - . ./backend/cicd/scripts/changerole.sh
       - aws sts get-caller-identity
       - echo Deploying...
       - cd backend/product
@@ -42,5 +42,5 @@ phases:
 
 artifacts:
   files:
-    - cicd/**/*
+    - backend/cicd/**/*
   discard-paths: no

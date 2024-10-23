@@ -27,7 +27,7 @@ phases:
     commands:
       - echo Running Build...
       - echo Changing role...
-      # - . ./cicd/scripts/changerole.sh
+      - . ./backend/cicd/scripts/changerole.sh
       - aws sts get-caller-identity
       - cd backend/product
       - ls -las
