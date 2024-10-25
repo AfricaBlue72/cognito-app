@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: ''
+#
+# Cloudfront CDN for all public services on the website
+#
+# Make sure to only apply Cacheing with a non-zero TTL for Anonymous GET/HEAD. All Authenticated calls should not cache
+#
+Parameters:
+  ProductName:
+    Type: String
+
+  TopLevelDomainName:
+    Type: String    
+
+  SubDomainName:
+    Type: String
+
+  AcmCertificateArn:
+    Type: String     
+  # WebACLArn:
+  #   Type: String  
+
+  # 658327ea-f89d-4fab-a63d-7e88639e58f6 #Caching optimized
+  # 4135ea2d-6df8-44a3-9df3-4b5a84be39ad #No caching
+  CachePolicyId: 
+    Type: String
+    Default: 658327ea-f89d-4fab-a63d-7e88639e58f6 
+
+  Environment:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: Environment
+    Description: Environment parameter from SSM
+  
+  CacheableDataTTL:
+    Default: 600
+    Type: Number
+    AllowedValues: [ 0, 5, 10, 15, 30, 60, 300, 600, 900 ]
+    
+Resources:
+  OriginAccessControl:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Description: Allow only CloudFront to read the bucket
+        Name: !Sub ${ProductName}-cloudfront-oac-config
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+
+  CloudFrontDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties: 
+      DistributionConfig: 
+        Comment: CDN for cognito app
+        Aliases:
+        - !Sub ${Environment}-${SubDomainName}.${TopLevelDomainName}
+        - !Sub www.${Environment}-${SubDomainName}.${TopLevelDomainName}
+        DefaultRootObject: index.html
+        Enabled: true
+        PriceClass: PriceClass_100
+        HttpVersion: http2
+        ViewerCertificate:
+          AcmCertificateArn: !Ref AcmCertificateArn
+          SslSupportMethod: sni-only
+          MinimumProtocolVersion:  TLSv1.2_2021
+        # Web Application Firewall  
+        # WebACLId: !Ref WebACLArn
+        Logging:
+          IncludeCookies: true
+          Bucket: !Sub ${ProductName}-${Environment}-hosting-logging-${AWS::Region}-${AWS::AccountId}.s3.amazonaws.com
+          Prefix: !Sub ${ProductName}/cloudfront
+        Origins:
+        - Id: !Sub ${ProductName}-${Environment}-hosting-${AWS::Region}-${AWS::AccountId}
+          # DomainName: !Join [".", [ !ImportValue CognitoTestWebsiteDomainNameBucket ,"s3-eu-west-1.amazonaws.com" ]]
+          DomainName: !Sub ${ProductName}-${Environment}-hosting-${AWS::Region}-${AWS::AccountId}.s3.${AWS::Region}.amazonaws.com
+          S3OriginConfig:
+            OriginAccessIdentity: ""
+            # OriginAccessIdentity: !Join [ '/', [ 'origin-access-identity/cloudfront', !ImportValue CognitoTestWebsiteDomainNameCdnOai ]]
+          OriginAccessControlId: !Ref OriginAccessControl
+        Enabled: true
+        DefaultCacheBehavior:
+          ViewerProtocolPolicy: redirect-to-https  # allow-all
+          TargetOriginId: !Sub ${ProductName}-${Environment}-hosting-${AWS::Region}-${AWS::AccountId}
+          # CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 #Caching optimized
+          CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad #No caching 
+
+Outputs:
+  CloudFrontUrl:
+    Description: The CDN native Distribution name
+    Export: 
+      Name: !Sub ${ProductName}-cdn-distrbution
+    Value: !GetAtt CloudFrontDistribution.DomainName

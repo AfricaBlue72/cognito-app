@@ -2,29 +2,16 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: S3 buckets for hosting static website files and CloudFront logs
 
 Parameters:
+  ProductName:
+    Type: String
+    Description: Name of the product
+
   Environment:
     Type: AWS::SSM::Parameter::Value<String>
     Default: Environment
     Description: The environment name from SSM Parameter Store
 
 Resources:
-  WebsiteHostingBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      BucketName: !Sub "cognio-app-${Environment}-hosting"
-      AccessControl: Private
-      PublicAccessBlockConfiguration:
-        BlockPublicAcls: true
-        BlockPublicPolicy: true
-        IgnorePublicAcls: true
-        RestrictPublicBuckets: true
-      BucketEncryption:
-        ServerSideEncryptionConfiguration:
-          - ServerSideEncryptionByDefault:
-              SSEAlgorithm: AES256
-      VersioningConfiguration:
-        Status: Enabled
-
   WebsiteHostingBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
@@ -37,25 +24,63 @@ Resources:
             Principal:
               Service: cloudfront.amazonaws.com
             Action: s3:GetObject
-            Resource: !Sub "${WebsiteHostingBucket.Arn}/*"
+            Resource: !Sub arn:aws:s3:::${WebsiteHostingBucket}/*
             Condition:
               StringEquals:
-                AWS:SourceArn: !Sub "arn:aws:cloudfront::${AWS::AccountId}:distribution/*"
-          - Sid: "DenyUnencryptedAccess"
+                AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/*
+          - Sid: DenyUnencryptedAccess
+            Effect: Deny
             Principal: "*"
-            Effect: "Deny"
-            Action: "s3:*"
+            Action: s3:*
             Resource: 
-            - !GetAtt "WebsiteHostingBucket.Arn"
-            - !Join [ '', [ !GetAtt "WebsiteHostingBucket.Arn", '/*' ]]
+            - !GetAtt WebsiteHostingBucket.Arn
+            - !Join [ '', [ !GetAtt WebsiteHostingBucket.Arn, '/*' ]]
             Condition:
               Bool: 
-                "aws:SecureTransport": false
+                aws:SecureTransport: false
+                
+  LogingBucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref LoggingBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudfront.amazonaws.com
+            Action: s3:PutObject
+            Resource: !Sub arn:aws:s3:::${LoggingBucket}/*
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub arn:aws:cloudfront::${AWS::AccountId}:distribution/*
+
+  WebsiteHostingBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${ProductName}-${Environment}-hosting-${AWS::Region}-${AWS::AccountId}
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      CorsConfiguration:
+        CorsRules:
+        - AllowedHeaders: [ "*" ]
+          AllowedMethods: [ GET ]
+          AllowedOrigins: [ "*" ]
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
 
   LoggingBucket:
     Type: AWS::S3::Bucket
     Properties:
-      BucketName: !Sub "cognio-app-${Environment}-hosting-logging"
+      BucketName: !Sub ${ProductName}-${Environment}-hosting-logging-${AWS::Region}-${AWS::AccountId}
       AccessControl: Private
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
@@ -74,15 +99,17 @@ Resources:
           Status: Enabled
           ExpirationInDays: 365
 
+  
+
 Outputs:
   WebsiteHostingBucketName:
     Description: Name of the S3 bucket for website hosting
     Value: !Ref WebsiteHostingBucket
     Export:
-      Name: !Sub "${AWS::StackName}-WebsiteHostingBucketName"
+      Name: !Sub ${ProductName}-${Environment}-hosting-${AWS::Region}-${AWS::AccountId}
 
   LoggingBucketName:
     Description: Name of the S3 bucket for CloudFront logs
     Value: !Ref LoggingBucket
     Export:
-      Name: !Sub "${AWS::StackName}-LoggingBucketName"
+      Name: !Sub ${ProductName}-${Environment}-hosting-logging-${AWS::Region}-${AWS::AccountId}

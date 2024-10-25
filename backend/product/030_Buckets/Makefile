@@ -4,12 +4,14 @@
 TEMPLATE_FILE := cognito-app-buckets.yaml
 CFDEPLOY_SCRIPT := ../../cicd/scripts/cfdeploy
 REGION := eu-west-1
+PRODUCT_NAME ?= cognito-app
 
 # Default target
 .PHONY: deploy
 deploy:
 	@echo "Deploying $(STACK_NAME) stack..."
-	@$(CFDEPLOY_SCRIPT)  $(TEMPLATE_FILE) --region $(REGION)
+	@$(CFDEPLOY_SCRIPT)  $(TEMPLATE_FILE) --region $(REGION) \
+		--parameter ProductName=$(PRODUCT_NAME) --force
 
 # Clean up target (optional, implement if needed)
 .PHONY: clean

@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: ''
+###
+### Export the ARN of the Certificate that can be used when setting up Custom Domain Names in API Gateway.
+###
+
+# need pass CDNDomainName as parameter as it was deployed in eu-west-1 and this stack is deployed in us-east-1
+
+Parameters:
+  ProductName:
+    Type: String
+    Description: Name of the product
+
+  TopLevelDomainName:
+    Type: String
+    Description: Top level domain name for the hosted zone
+  
+  SubDomainName:
+    Type: String
+    Description: Sub domain name for the hosted zone
+
+  Environment:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: Environment
+    Description: Environment parameter from SSM
+
+# Certificate
+Resources:
+  Certificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Sub ${Environment}-${SubDomainName}.${TopLevelDomainName}
+      ValidationMethod: DNS
+      SubjectAlternativeNames:
+      - !Sub www.${Environment}-${SubDomainName}.${TopLevelDomainName}
+
+Outputs:
+  CertificateOutput:
+    Description: CertificateExport
+    Export:
+      Name: !Sub ${ProductName}-certificate
+    Value:
+      !Ref Certificate

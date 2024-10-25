@@ -1,0 +1,50 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: Creating a hosted domain with conditional naming based on environment.
+
+Parameters:
+  ProductName:
+    Type: String
+    Description: Name of the product
+
+  TopLevelDomainName:
+    Type: String
+    Description: Top level domain name for the hosted zone
+  
+  SubDomainName:
+    Type: String
+    Description: Sub domain name for the hosted zone
+  
+  Environment:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: Environment
+    Description: Environment parameter from SSM
+
+Conditions:
+  IsProduction: !Equals 
+    - !Ref Environment
+    - production
+
+Resources:
+  Domain:
+    Type: AWS::Route53::HostedZone
+    Properties: 
+      Name: !If 
+        - IsProduction
+        - !Sub ${SubDomainName}.${TopLevelDomainName}
+        - !Sub ${Environment}-${SubDomainName}.${TopLevelDomainName}
+ 
+Outputs:
+  DomainNameOutput:
+    Description: Cognito App  Domain Name
+    Export:
+      Name: !Sub ${ProductName}-domain-name
+    Value: !If 
+      - IsProduction
+      - !Sub ${SubDomainName}.${TopLevelDomainName}
+      - !Sub ${Environment}-${SubDomainName}.${TopLevelDomainName}
+      
+  HostedZoneIdOutput:
+    Export:
+      Name: !Sub ${ProductName}-hosted-zone-id
+    Value:
+      !Ref Domain
