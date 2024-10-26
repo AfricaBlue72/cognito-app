@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: ''
+
+Parameters:
+  ProductName:
+    Type: String
+    Description: Name of the product
+
+  TopLevelDomainName:
+    Type: String
+    Description: Top level domain name for the hosted zone
+  
+  SubDomainName:
+    Type: String
+    Description: Sub domain name for the hosted zone
+
+  Environment:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: Environment
+    Description: Environment parameter from SSM
+
+Conditions:
+  IsProduction: !Equals 
+    - !Ref Environment
+    - production
+
+Resources:
+  CloudFrontAliasTypeA:
+    Type: AWS::Route53::RecordSetGroup
+    Properties: 
+      HostedZoneId: !ImportValue 
+        Fn::Sub:  ${ProductName}-hosted-zone-id
+      Comment: Alias records to CloudFront distribution
+      RecordSets:
+        - Name: !If
+            - IsProduction
+            -  !Sub ${SubDomainName}.${TopLevelDomainName}
+            -  !Sub ${Environment}-${SubDomainName}.${TopLevelDomainName}
+          Type: A
+          AliasTarget:   
+            DNSName: !ImportValue 
+              Fn::Sub: ${ProductName}-cdn-distribution
+            HostedZoneId: Z2FDTNDATAQYW2 
+        - Name: !If
+            - IsProduction
+            -  !Sub ${SubDomainName}.${TopLevelDomainName}
+            -  !Sub ${Environment}-${SubDomainName}.${TopLevelDomainName}
+          Type: AAAA
+          AliasTarget:   
+            DNSName: !ImportValue 
+              Fn::Sub: ${ProductName}-cdn-distribution
+            HostedZoneId: Z2FDTNDATAQYW2

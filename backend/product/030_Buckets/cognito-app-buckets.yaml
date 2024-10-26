@@ -74,14 +74,18 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
-      VersioningConfiguration:
-        Status: Enabled
+      # VersioningConfiguration:
+      #   Status: Enabled
 
   LoggingBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub ${ProductName}-${Environment}-hosting-logging-${AWS::Region}-${AWS::AccountId}
-      AccessControl: Private
+      # AccessControl: Private
+      # AccessControl: LogDeliveryWrite
+      OwnershipControls:
+        Rules:
+        - ObjectOwnership: ObjectWriter
       PublicAccessBlockConfiguration:
         BlockPublicAcls: true
         BlockPublicPolicy: true
@@ -91,13 +95,11 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
-      VersioningConfiguration:
-        Status: Enabled
       LifecycleConfiguration:
         Rules:
         - Id: AutoDelete
           Status: Enabled
-          ExpirationInDays: 365
+          ExpirationInDays: 30
 
   
 

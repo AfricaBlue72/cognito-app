@@ -24,15 +24,26 @@ Parameters:
     Default: Environment
     Description: Environment parameter from SSM
 
+Conditions:
+  IsProduction: !Equals 
+    - !Ref Environment
+    - production
+
 # Certificate
 Resources:
   Certificate:
     Type: AWS::CertificateManager::Certificate
     Properties:
-      DomainName: !Sub ${Environment}-${SubDomainName}.${TopLevelDomainName}
+      DomainName: !If 
+        - IsProduction
+        - !Sub ${SubDomainName}.${TopLevelDomainName}
+        - !Sub ${Environment}-${SubDomainName}.${TopLevelDomainName}
       ValidationMethod: DNS
       SubjectAlternativeNames:
-      - !Sub www.${Environment}-${SubDomainName}.${TopLevelDomainName}
+        - !If 
+          - IsProduction
+          - !Sub www.${SubDomainName}.${TopLevelDomainName}
+          - !Sub www.${Environment}-${SubDomainName}.${TopLevelDomainName}
 
 Outputs:
   CertificateOutput:

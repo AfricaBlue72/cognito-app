@@ -35,7 +35,12 @@ Parameters:
     Default: 600
     Type: Number
     AllowedValues: [ 0, 5, 10, 15, 30, 60, 300, 600, 900 ]
-    
+
+Conditions:
+  IsProduction: !Equals 
+    - !Ref Environment
+    - production
+
 Resources:
   OriginAccessControl:
     Type: AWS::CloudFront::OriginAccessControl
@@ -53,8 +58,14 @@ Resources:
       DistributionConfig: 
         Comment: CDN for cognito app
         Aliases:
-        - !Sub ${Environment}-${SubDomainName}.${TopLevelDomainName}
-        - !Sub www.${Environment}-${SubDomainName}.${TopLevelDomainName}
+        - !If 
+          - IsProduction
+          - !Sub ${SubDomainName}.${TopLevelDomainName}
+          - !Sub ${Environment}-${SubDomainName}.${TopLevelDomainName}
+        - !If 
+          - IsProduction
+          - !Sub www.${SubDomainName}.${TopLevelDomainName}
+          - !Sub www.${Environment}-${SubDomainName}.${TopLevelDomainName}
         DefaultRootObject: index.html
         Enabled: true
         PriceClass: PriceClass_100
@@ -67,7 +78,7 @@ Resources:
         # WebACLId: !Ref WebACLArn
         Logging:
           IncludeCookies: true
-          Bucket: !Sub ${ProductName}-${Environment}-hosting-logging-${AWS::Region}-${AWS::AccountId}.s3.amazonaws.com
+          Bucket: !Sub ${ProductName}-${Environment}-hosting-logging-${AWS::Region}-${AWS::AccountId}.s3.${AWS::Region}.amazonaws.com 
           Prefix: !Sub ${ProductName}/cloudfront
         Origins:
         - Id: !Sub ${ProductName}-${Environment}-hosting-${AWS::Region}-${AWS::AccountId}
@@ -88,5 +99,5 @@ Outputs:
   CloudFrontUrl:
     Description: The CDN native Distribution name
     Export: 
-      Name: !Sub ${ProductName}-cdn-distrbution
+      Name: !Sub ${ProductName}-cdn-distribution
     Value: !GetAtt CloudFrontDistribution.DomainName
