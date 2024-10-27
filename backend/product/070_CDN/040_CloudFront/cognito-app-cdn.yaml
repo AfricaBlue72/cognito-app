@@ -81,7 +81,7 @@ Resources:
           Bucket: !Sub ${ProductName}-${Environment}-hosting-logging-${AWS::Region}-${AWS::AccountId}.s3.${AWS::Region}.amazonaws.com 
           Prefix: !Sub ${ProductName}/cloudfront
         Origins:
-        - Id: !Sub ${ProductName}-${Environment}-hosting-${AWS::Region}-${AWS::AccountId}
+        - Id: S3DefaultOrigin #!Sub ${ProductName}-${Environment}-hosting-${AWS::Region}-${AWS::AccountId}
           # DomainName: !Join [".", [ !ImportValue CognitoTestWebsiteDomainNameBucket ,"s3-eu-west-1.amazonaws.com" ]]
           DomainName: !Sub ${ProductName}-${Environment}-hosting-${AWS::Region}-${AWS::AccountId}.s3.${AWS::Region}.amazonaws.com
           S3OriginConfig:
@@ -91,7 +91,7 @@ Resources:
         Enabled: true
         DefaultCacheBehavior:
           ViewerProtocolPolicy: redirect-to-https  # allow-all
-          TargetOriginId: !Sub ${ProductName}-${Environment}-hosting-${AWS::Region}-${AWS::AccountId}
+          TargetOriginId: S3DefaultOrigin #!Sub ${ProductName}-${Environment}-hosting-${AWS::Region}-${AWS::AccountId}
           # CachePolicyId: 658327ea-f89d-4fab-a63d-7e88639e58f6 #Caching optimized
           CachePolicyId: 4135ea2d-6df8-44a3-9df3-4b5a84be39ad #No caching 
 
