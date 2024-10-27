@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useState, useContext, useMemo } from 'react';
+import React, { createContext, useState, useContext, useMemo, useEffect } from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -13,7 +13,19 @@ const DARK_YELLOW = '#E6C200';
 const DARK_YELLOW_HOVER = 'rgba(255, 215, 0, 0.08)';
 
 export function Providers({ children }) {
-  const [mode, setMode] = useState('light');
+  const [mode, setMode] = useState(() => {
+    // Try to get the theme from localStorage
+    if (typeof window !== 'undefined') {
+      const storedMode = localStorage.getItem('theme');
+      return storedMode || 'light';
+    }
+    return 'light';
+  });
+
+  useEffect(() => {
+    // Update localStorage when the theme changes
+    localStorage.setItem('theme', mode);
+  }, [mode]);
 
   const colorMode = useMemo(
     () => ({

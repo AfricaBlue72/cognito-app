@@ -44,6 +44,9 @@ Resources:
           - IsProduction
           - !Sub www.${SubDomainName}.${TopLevelDomainName}
           - !Sub www.${Environment}-${SubDomainName}.${TopLevelDomainName}
+        - !If 
+          - IsProduction
+          - ${TopLevelDomainName}
 
 Outputs:
   CertificateOutput:
