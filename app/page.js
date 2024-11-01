@@ -1,6 +1,6 @@
 "use client";
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Container, Typography, Button } from '@mui/material';
 import Link from 'next/link';
 import { configureAmplify } from '../libs/cognitoConfig';
@@ -8,7 +8,12 @@ import { configureAmplify } from '../libs/cognitoConfig';
 export default function Home() {
   useEffect(() => {
     // Configure Amplify when the app component mounts
-    configureAmplify();
+    try {
+      configureAmplify();
+      console.log('Amplify configuration attempted');
+    } catch (error) {
+      console.error('Error during Amplify configuration:', error);
+    }
   }, []);
 
   return (

@@ -1,22 +1,35 @@
 "use client";
 
 import React, { useState } from 'react';
-import { TextField, Button, IconButton, InputAdornment, Typography, Box, Container } from '@mui/material';
+import { TextField, Button, IconButton, InputAdornment, Typography, Box, Container, CircularProgress } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Link from 'next/link';
+import { loginWithAmplify } from '../../libs/cognitoAuth';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = (event) => event.preventDefault();
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Handle login logic here
-    console.log('Login submitted', { username, password });
+    setLoading(true);
+    setError('');
+    try {
+      await loginWithAmplify(username, password);
+      // Handle successful login (e.g., redirect to dashboard)
+      console.log('Login successful');
+    } catch (err) {
+      setError('Login failed. Please check your credentials and try again.');
+      console.error('Login error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -71,13 +84,19 @@ export default function Login() {
               ),
             }}
           />
+          {error && (
+            <Typography color="error" variant="body2" sx={{ mt: 1 }}>
+              {error}
+            </Typography>
+          )}
           <Button
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
           >
-            Login
+            {loading ? <CircularProgress size={24} /> : 'Login'}
           </Button>
           <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
             <Link href="/forgot-password" passHref>
