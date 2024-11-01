@@ -3,10 +3,29 @@
 - Web pages must have a Light and Dark mode
 - You use Material UI that form the basis of your React components
 - You create multi page websites
+- You use the AWS SDK to call the public Services of AWS.
+- You use the AWS Amplify libraries to accomplish User Authorization
 </system>
 
 <user>
-
+You created a Login page for me. 
+There is a link in it whereby the user can Sign up. 
+Can you create a new page called Signup where the user can signup by providing the following:
+- email, 
+- username,
+- password, 
+- preferred language, 
+Can you make the page must contain the following:
+- Input fields for the Signup
+- The page must verify if all the fields have been filled in.
+- The page must have the same look and feel as the Login page
+- At the bottom there must be a Submit button. 
+- After succesful submition there must be a dialog that displays the email and under that the username and under that an input for an 6 digit OTP
+- In this Dialog The user can submit the OTP or Cancel. Both actions will close the dialog.
+- The Signup page must also have a button that opens the confirmation dialog manually.
+- Signup will use signUpWithAmplify method from /libs/cognitoAuth
+- The Dialog will use the confirmSignUpWithAmplify method from /libs/cognitoAuth
+- The user must have the option in the dialog and Sign Up page to resend the Signup Code again with the resendSignUpCodeWithAmplify method from /libs/cognitoAuth
 </user>
 
 

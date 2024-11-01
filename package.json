@@ -13,6 +13,7 @@
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.1.4",
     "@mui/material": "^6.1.4",
+    "aws-amplify": "^6.8.0",
     "next": "13.4.19",
     "react": "^18",
     "react-dom": "^18"

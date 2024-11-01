@@ -3,8 +3,14 @@
 import React from 'react';
 import { Box, Container, Typography, Button } from '@mui/material';
 import Link from 'next/link';
+import { configureAmplify } from '../libs/cognitoConfig';
 
 export default function Home() {
+  useEffect(() => {
+    // Configure Amplify when the app component mounts
+    configureAmplify();
+  }, []);
+
   return (
     <Box
       sx={{
