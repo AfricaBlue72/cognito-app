@@ -14,15 +14,16 @@
     "@mui/icons-material": "^6.1.4",
     "@mui/material": "^6.1.4",
     "aws-amplify": "^6.8.0",
-    "next": "13.4.19",
+    "next": "15.0.2",
     "react": "^18",
-    "react-dom": "^18"
+    "react-dom": "^18",
+    "react-flag-kit": "^1.1.1"
   },
   "devDependencies": {
     "eslint": "^8",
     "eslint-config-next": "13.4.19"
   },
   "engines": {
-    "node": ">=18.16.1"
+    "node": ">=20.0.0"
   }
 }

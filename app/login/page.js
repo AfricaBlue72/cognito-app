@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import { TextField, Button, IconButton, InputAdornment, Typography, Box, Container, CircularProgress } from '@mui/material';
+import { TextField, Button, IconButton, InputAdornment, Typography, Box, Container, CircularProgress, Link } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import Link from 'next/link';
 import { loginWithAmplify } from '../../libs/cognitoAuth';
 
 export default function Login() {
@@ -42,10 +41,10 @@ export default function Login() {
           alignItems: 'center',
         }}
       >
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h2">
           Login
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
           <TextField
             margin="normal"
             required
@@ -98,18 +97,14 @@ export default function Login() {
           >
             {loading ? <CircularProgress size={24} /> : 'Login'}
           </Button>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Link href="/forgot-password" passHref>
-              <Typography variant="body2" component="a">
-                Forgot password?
-              </Typography>
-            </Link>
-            <Link href="/signup" passHref>
-              <Typography variant="body2" component="a">
-                Sign up
-              </Typography>
-            </Link>
-          </Box>
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mt: 2 }}>
+          <Link href="/forgot-password" variant="body2">
+            Forgot Password
+          </Link>
+          <Link href="/signup" variant="body2">
+            Sign Up
+          </Link>
         </Box>
       </Box>
     </Container>

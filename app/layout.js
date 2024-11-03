@@ -1,3 +1,5 @@
+"use client";
+
 import localFont from "next/font/local";
 import { Providers } from './providers';
 import Header from './components/Header';
@@ -15,10 +17,10 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-export const metadata = {
-  title: "My Website",
-  description: "A multi-page website created with Next.js and Material UI",
-};
+// export const metadata = {
+//   title: "My Website",
+//   description: "A multi-page website created with Next.js and Material UI",
+// };
 
 export default function RootLayout({ children }) {
   return (

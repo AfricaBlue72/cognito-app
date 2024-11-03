@@ -15,6 +15,7 @@ const Header = () => {
   const menuItems = [
     { text: 'Home', href: '/' },
     { text: 'About', href: '/about' },
+    { text: 'Login', href: '/login' },
   ];
 
   const toggleDrawer = (open) => (event) => {
@@ -32,15 +33,14 @@ const Header = () => {
     <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
       <List>
         {menuItems.map((item) => (
-          <ListItem button key={item.text} component={Link} href={item.href} onClick={toggleDrawer(false)}>
-            <ListItemText primary={item.text} />
+          <ListItem key={item.text} onClick={toggleDrawer(false)}>
+            <Link href={item.href} passHref style={{ textDecoration: 'none', color: 'inherit' }}>
+              <ListItemText primary={item.text} />
+            </Link>
           </ListItem>
         ))}
-        <ListItem button key="login" component={Link} href="/login" onClick={toggleDrawer(false)}>
-          <ListItemText primary="Login" />
-        </ListItem>
         {isMobile && (
-          <ListItem button key="theme-toggle" onClick={() => { toggleColorMode(); toggleDrawer(false)(); }}>
+          <ListItem onClick={() => { toggleColorMode(); toggleDrawer(false)(); }}>
             <IconButton color="inherit">
               {theme.palette.mode === 'dark' ? <SunIcon /> : <MoonIcon />}
             </IconButton>
@@ -53,7 +53,7 @@ const Header = () => {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+        <Typography component="h1" variant="h2"  sx={{ flexGrow: 1 }}>
           My Website
         </Typography>
         {isMobile ? (
@@ -72,11 +72,16 @@ const Header = () => {
         ) : (
           <>
             {menuItems.map((item) => (
-              <Button key={item.text} color="inherit" component={Link} href={item.href}>
+              <Button 
+                key={item.text} 
+                color="inherit" 
+                component={Link} 
+                href={item.href}
+                sx={{ mx: 1 }} // Add horizontal padding
+              >
                 {item.text}
               </Button>
             ))}
-            <Button color="inherit" component={Link} href="/login">Login</Button>
             <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
               {theme.palette.mode === 'dark' ? <SunIcon /> : <MoonIcon />}
             </IconButton>

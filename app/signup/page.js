@@ -1,8 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, TextField, Container, Typography, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, MenuItem, useTheme } from '@mui/material';
-import { signUpWithAmplify, confirmSignUpWithAmplify, resendSignUpCodeWithAmplify } from '../../libs/cognitoAuth';
+import { Button, TextField, Container, Typography, Box, MenuItem, useTheme, Alert, Link , IconButton, InputAdornment } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+// import Link from 'next/link';
+import { signUpWithAmplify } from '../../libs/cognitoAuth';
+import { FlagIcon } from 'react-flag-kit';
 
 const SignupPage = () => {
   const theme = useTheme();
@@ -10,49 +13,49 @@ const SignupPage = () => {
     email: '',
     username: '',
     password: '',
-    preferredLanguage: '',
+    preferredLanguage: 'en',
   });
-  const [openDialog, setOpenDialog] = useState(false);
-  const [otp, setOtp] = useState('');
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
+  };
+
+  const isEmailLike = (str) => {
+    // Simple regex to check if a string resembles an email address
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (Object.values(formData).every(field => field)) {
+    setError('');
+    setSuccess('');
+    const { email, username, password, preferredLanguage } = formData;
+    if (email && password && preferredLanguage) {
       try {
-        await signUpWithAmplify(formData);
-        setOpenDialog(true);
+        let preferred_username = username;
+        if (preferred_username && isEmailLike(preferred_username)) {
+          throw new Error('Username cannot be an email address or resemble one.');
+        }
+        const { isSignUpComplete, userId, nextStep } = await signUpWithAmplify(email, password, preferred_username, preferredLanguage);
+        console.log('Sign up result:', { isSignUpComplete, userId, nextStep });
+        setSuccess('Sign up successful! You can now log in.');
       } catch (error) {
         console.error('Signup failed:', error);
-        // Handle error (e.g., show error message to user)
+        setError(error.message || 'An error occurred during signup. Please try again.');
       }
     } else {
-      // Show error message about incomplete fields
-      console.error('Please fill in all fields');
-    }
-  };
-
-  const handleConfirmSignUp = async () => {
-    try {
-      await confirmSignUpWithAmplify(formData.username, otp);
-      setOpenDialog(false);
-      // Handle successful confirmation (e.g., redirect to login page)
-    } catch (error) {
-      console.error('Confirmation failed:', error);
-      // Handle error (e.g., show error message to user)
-    }
-  };
-
-  const handleResendCode = async () => {
-    try {
-      await resendSignUpCodeWithAmplify(formData.username);
-      // Show success message to user
-    } catch (error) {
-      console.error('Code resend failed:', error);
-      // Handle error (e.g., show error message to user)
+      setError('Please fill in all required fields');
     }
   };
 
@@ -66,10 +69,12 @@ const SignupPage = () => {
           alignItems: 'center',
         }}
       >
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h2">
           Sign up
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+        {error && <Alert severity="error" sx={{ width: '100%', mt: 2 }}>{error}</Alert>}
+        {success && <Alert severity="success" sx={{ width: '100%', mt: 2 }}>{success}</Alert>}
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
           <TextField
             margin="normal"
             required
@@ -84,14 +89,14 @@ const SignupPage = () => {
           />
           <TextField
             margin="normal"
-            required
             fullWidth
             id="username"
-            label="Username"
+            label="Username (optional)"
             name="username"
             autoComplete="username"
             value={formData.username}
             onChange={handleChange}
+            helperText="Optional. Cannot be an email address or resemble one."
           />
           <TextField
             margin="normal"
@@ -99,11 +104,25 @@ const SignupPage = () => {
             fullWidth
             name="password"
             label="Password"
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             id="password"
             autoComplete="new-password"
             value={formData.password}
             onChange={handleChange}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
           <TextField
             margin="normal"
@@ -115,10 +134,26 @@ const SignupPage = () => {
             select
             value={formData.preferredLanguage}
             onChange={handleChange}
+            defaultValue="en"
           >
-            <MenuItem value="en">English</MenuItem>
-            <MenuItem value="es">Spanish</MenuItem>
-            <MenuItem value="fr">French</MenuItem>
+            <MenuItem value="en">
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <FlagIcon code="GB" size={16} style={{ marginRight: '8px' }} />
+                English
+              </Box>
+            </MenuItem>
+            <MenuItem value="es">
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <FlagIcon code="ES" size={16} style={{ marginRight: '8px' }} />
+                Spanish
+              </Box>
+            </MenuItem>
+            <MenuItem value="fr">
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <FlagIcon code="FR" size={16} style={{ marginRight: '8px' }} />
+                French
+              </Box>
+            </MenuItem>
           </TextField>
           <Button
             type="submit"
@@ -128,43 +163,18 @@ const SignupPage = () => {
           >
             Sign Up
           </Button>
-          <Button
-            fullWidth
-            variant="outlined"
-            onClick={() => setOpenDialog(true)}
-            sx={{ mt: 1, mb: 2 }}
-          >
-            Enter Confirmation Code
-          </Button>
+        </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mt: 2 }}>
+          {/* <Link href="/login" passHref>
+            <MuiLink component="span" variant="body2" sx={{ cursor: 'pointer' }}>
+            Already have an account? Login
+            </MuiLink>
+          </Link> */}
+          <Link href="/login" variant="body2">
+          Already have an account? Login
+          </Link>
         </Box>
       </Box>
-
-      <Dialog open={openDialog} onClose={() => setOpenDialog(false)}>
-        <DialogTitle>Confirm Sign Up</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Please enter the 6-digit OTP sent to your email.
-          </DialogContentText>
-          <Typography variant="body1">Email: {formData.email}</Typography>
-          <Typography variant="body1">Username: {formData.username}</Typography>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="otp"
-            label="OTP"
-            type="text"
-            fullWidth
-            variant="standard"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-          <Button onClick={handleConfirmSignUp}>Confirm</Button>
-          <Button onClick={handleResendCode}>Resend Code</Button>
-        </DialogActions>
-      </Dialog>
     </Container>
   );
 };

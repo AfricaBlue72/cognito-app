@@ -1,11 +1,14 @@
 import { Amplify } from 'aws-amplify';
+import { cognitoUserPoolsTokenProvider } from 'aws-amplify/auth/cognito';
+import { CookieStorage } from 'aws-amplify/utils';
+
 
 const amplifyConfig = {
   Auth: {
     Cognito: {
-      userPoolId: 'eu-west-1_ubPkTKxs6',
-      userPoolClientId: '1q0bnvbfii1cmcb7jb1a7qgfkj',
-      identityPoolId: 'eu-west-1:cb735aec-b81e-464c-a7ff-0983df7aa36b',
+      userPoolId: 'eu-west-1_Q4KoMg9hb',
+      userPoolClientId: '7p3nchhf3ufmfeegv6kjs63r6s',
+      identityPoolId: 'eu-west-1:b836a443-3051-406e-96e7-a90f3a289faa',
       loginWith: {
         email: true,
       },
@@ -13,6 +16,12 @@ const amplifyConfig = {
       userAttributes: {
         email: {
           required: true,
+        },
+        locale: {
+          required: true,
+        },
+        preferred_username: {
+          required: false,
         },
       },
       allowGuestAccess: true,
@@ -30,6 +39,7 @@ const amplifyConfig = {
 export const configureAmplify = () => {
   try {
     if (typeof Amplify.configure === 'function') {
+      // cognitoUserPoolsTokenProvider.setKeyValueStorage(new CookieStorage());
       Amplify.configure(amplifyConfig);
       console.log('Amplify configured successfully');
     } else {
