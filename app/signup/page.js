@@ -1,26 +1,28 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, TextField, Container, Typography, Box, MenuItem, useTheme, Alert, Link, IconButton, InputAdornment } from '@mui/material';
+import { Button, TextField, Container, Typography, Box, MenuItem, useTheme, Link, IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { signUpWithAmplify } from '../../libs/cognitoAuth';
 import { FlagIcon } from 'react-flag-kit';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../libs/AuthContext';
+import LoadingOverlay from '../components/LoadingOverlay';
+import { useSnackBar } from '../context/SnackBarContext';
 
 const SignupPage = () => {
   const theme = useTheme();
   const router = useRouter();
   const { login } = useAuth();
+  const { showSnackBar } = useSnackBar();
   const [formData, setFormData] = useState({
     email: '',
     username: '',
     password: '',
     preferredLanguage: 'en',
   });
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -40,8 +42,7 @@ const SignupPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setLoading(true);
     const { email, username, password, preferredLanguage } = formData;
     if (email && password && preferredLanguage) {
       try {
@@ -52,38 +53,38 @@ const SignupPage = () => {
         const signUpResult = await signUpWithAmplify(email, password, preferred_username, preferredLanguage);
         console.log('Sign up result:', signUpResult);
         
-        // Store the entire signUpResult in local storage
         localStorage.setItem('signUpResult', JSON.stringify(signUpResult));
         
         if (signUpResult.isSignUpComplete) {
-          setSuccess('Sign up successful! You can now log in.');
-          // Optionally redirect to login page
-          // router.push('/login');
+          showSnackBar('Sign up successful! You can now log in.', 'success', 5000);
         } else if (signUpResult.nextStep && signUpResult.nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
-          setSuccess('Sign up successful! Please check your email for the confirmation code.');
+          showSnackBar('Sign up successful! Please check your email for the confirmation code.', 'success', 5000);
           localStorage.setItem('confirmSignUpDestination', email);
           router.push('/confirm-signup');
         } else {
-          // Handle any unexpected next steps
-          setError('Unexpected sign up result. Please try again or contact support.');
+          showSnackBar('Unexpected sign up result. Please try again or contact support.', 'error', 5000);
         }
       } catch (error) {
         console.error('Signup failed:', error);
         if (error.name === 'UsernameExistsException') {
-          setError('An account with this email already exists.');
+          showSnackBar('An account with this email already exists.', 'error', 5000);
         } else if (error.name === 'InvalidPasswordException') {
-          setError('Password does not meet the requirements. Please try a stronger password.');
+          showSnackBar('Password does not meet the requirements. Please try a stronger password.', 'error', 5000);
         } else {
-          setError(error.message || 'An error occurred during signup. Please try again.');
+          showSnackBar(error.message || 'An error occurred during signup. Please try again.', 'error', 5000);
         }
+      } finally {
+        setLoading(false);
       }
     } else {
-      setError('Please fill in all required fields');
+      showSnackBar('Please fill in all required fields', 'error', 5000);
+      setLoading(false);
     }
   };
 
   return (
     <Container component="main" maxWidth="xs">
+      <LoadingOverlay isLoading={loading} />
       <Box
         sx={{
           marginTop: 8,
@@ -95,12 +96,6 @@ const SignupPage = () => {
         <Typography component="h1" variant="h2">
           Sign up
         </Typography>
-        {error && <Alert severity="error" sx={{ width: '100%', mt: 2 }} onClose={() => {}}>{error}</Alert>}
-        {success && (
-          <Alert severity="success" sx={{ width: '100%', mt: 2 }} onClose={() => {}}>
-            {success}
-          </Alert>
-        )}
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
           <TextField
             margin="normal"
@@ -113,6 +108,7 @@ const SignupPage = () => {
             autoFocus
             value={formData.email}
             onChange={handleChange}
+            disabled={loading}
           />
           <TextField
             margin="normal"
@@ -124,6 +120,7 @@ const SignupPage = () => {
             value={formData.username}
             onChange={handleChange}
             helperText="Optional. Cannot be an email address or resemble one."
+            disabled={loading}
           />
           <TextField
             margin="normal"
@@ -136,19 +133,23 @@ const SignupPage = () => {
             autoComplete="new-password"
             value={formData.password}
             onChange={handleChange}
+            disabled={loading}
             slotProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              )
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                      disabled={loading}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
             }}
           />
           <TextField
@@ -162,6 +163,7 @@ const SignupPage = () => {
             value={formData.preferredLanguage}
             onChange={handleChange}
             defaultValue="en"
+            disabled={loading}
           >
             <MenuItem value="en">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -187,12 +189,17 @@ const SignupPage = () => {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
           >
             Sign Up
           </Button>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mt: 2 }}>
-          <Link variant="body2" onClick={() => router.push('/login')} sx={{ cursor: 'pointer' }}>
+          <Link 
+            variant="body2" 
+            onClick={() => !loading && router.push('/login')} 
+            sx={{ cursor: loading ? 'default' : 'pointer', pointerEvents: loading ? 'none' : 'auto' }}
+          >
             Already have an account? Login
           </Link>
         </Box>

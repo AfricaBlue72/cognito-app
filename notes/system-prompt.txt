@@ -8,15 +8,14 @@
 </system>
 
 <user>
-In the login page there is a 'forgot password' link.
-
-Could you implement a new page for Forgot Password?
-- Can you first add two new methods in cogngitoAuth.js called resetPasswordWithAmplify and confirmResetPasswordWithAmplify.
-- You can use the code snippen that is docemented here: https://docs.amplify.aws/react/build-a-backend/auth/manage-users/manage-passwords/#reset-password
-- The user must be able to enter his/her email address 
-- There must be a submit button that resets the password; you can use resetPasswordWithAmplify that you created in cognitoAuth.js
-- Upon succesfull submition a second page must open where the user can enter his email adres, confirmation code and new password. You use confirmResetPasswordWithAmplify for this.
-- This page can use the ConfirmationCodeInput component in file ConfirmationCodeInput.js
+I want to be able to convey certain items to the user of this web page.
+We currently use an alert but they are tight to the page. It disappears with navigation.
+Is the following possible:
+-   Create a SnackBar that always appears at the bottom of the browsing window (i.e. at the bottom of the viewport)
+-   This SnackBar must have a soft look in red for errors, orange for warnings and green for information
+-   This SnackBar must be able to stay for a certain amount of seconds (configurable)
+-   Alternatively the SnackBars stays permanent until the user clicks it away.
+-   Can we start by implemnting this for the Login page. Where we remove the Alert and replace this with the SnackBar?
 </user>
 
 Once the signup has been done I want you to store the SignUpOutput in local storage.

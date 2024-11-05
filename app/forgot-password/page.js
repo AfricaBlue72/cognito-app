@@ -4,26 +4,33 @@ import React, { useState } from 'react';
 import { TextField, Button, Typography, Box, Container } from '@mui/material';
 import { resetPasswordWithAmplify } from '../../libs/cognitoAuth';
 import { useRouter } from 'next/navigation';
+import LoadingOverlay from '../components/LoadingOverlay';
+import { useSnackBar } from '../context/SnackBarContext';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { showSnackBar } = useSnackBar();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setLoading(true);
     try {
       await resetPasswordWithAmplify(email);
+      showSnackBar('Password reset initiated. Check your email for further instructions.', 'success', 5000);
       router.push('/confirm-forgot-password');
     } catch (err) {
-      setError('Failed to initiate password reset. Please try again.');
+      showSnackBar('Failed to initiate password reset. Please try again.', 'error', 5000);
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <Container component="main" maxWidth="xs">
+      <LoadingOverlay isLoading={loading} />
       <Box
         sx={{
           marginTop: 8,
@@ -47,20 +54,17 @@ export default function ForgotPassword() {
             autoFocus
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={loading}
           />
           <Button
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
           >
             Reset Password
           </Button>
-          {error && (
-            <Typography color="error" align="center">
-              {error}
-            </Typography>
-          )}
         </Box>
       </Box>
     </Container>

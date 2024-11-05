@@ -6,24 +6,30 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { confirmResetPasswordWithAmplify } from '../../libs/cognitoAuth';
 import { useRouter } from 'next/navigation';
 import ConfirmationCodeInput from '../components/ConfirmationCodeInput';
+import LoadingOverlay from '../components/LoadingOverlay';
+import { useSnackBar } from '../context/SnackBarContext';
 
 export default function ConfirmForgotPassword() {
   const [email, setEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [code, setCode] = useState('');
-  const [error, setError] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { showSnackBar } = useSnackBar();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    setLoading(true);
     try {
       await confirmResetPasswordWithAmplify(email, newPassword, code);
+      showSnackBar('Password reset successful. You can now log in with your new password.', 'success', 5000);
       router.push('/login');
     } catch (err) {
-      setError('Failed to reset password. Please try again.');
+      showSnackBar('Failed to reset password. Please try again.', 'error', 5000);
       console.error(err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,6 +43,7 @@ export default function ConfirmForgotPassword() {
 
   return (
     <Container component="main" maxWidth="xs">
+      <LoadingOverlay isLoading={loading} />
       <Box
         sx={{
           marginTop: 8,
@@ -60,8 +67,9 @@ export default function ConfirmForgotPassword() {
             autoFocus
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            disabled={loading}
           />
-          <ConfirmationCodeInput onCodeComplete={handleCodeComplete} />
+          <ConfirmationCodeInput onCodeComplete={handleCodeComplete} disabled={loading} />
           <TextField
             margin="normal"
             required
@@ -73,6 +81,7 @@ export default function ConfirmForgotPassword() {
             autoComplete="new-password"
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
+            disabled={loading}
             slotProps={{
               input: {
                 endAdornment: (
@@ -81,6 +90,7 @@ export default function ConfirmForgotPassword() {
                       aria-label="toggle password visibility"
                       onClick={handleTogglePasswordVisibility}
                       edge="end"
+                      disabled={loading}
                     >
                       {showPassword ? <VisibilityOff /> : <Visibility />}
                     </IconButton>
@@ -94,14 +104,10 @@ export default function ConfirmForgotPassword() {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
+            disabled={loading}
           >
             Confirm Password Reset
           </Button>
-          {error && (
-            <Typography color="error" align="center">
-              {error}
-            </Typography>
-          )}
         </Box>
       </Box>
     </Container>

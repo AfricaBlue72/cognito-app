@@ -7,6 +7,7 @@ import { Providers } from './providers';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { AuthProvider } from '../libs/AuthContext';
+import { SnackBarProvider } from './context/SnackBarContext';
 import "./globals.css";
 
 const geistSans = localFont({
@@ -39,9 +40,11 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <AuthProvider>
           <Providers>
-            <Header />
-            <main>{children}</main>
-            <Footer />
+            <SnackBarProvider>
+              <Header />
+              <main>{children}</main>
+              <Footer />
+            </SnackBarProvider>
           </Providers>
         </AuthProvider>
       </body>

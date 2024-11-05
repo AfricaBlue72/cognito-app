@@ -1,20 +1,22 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Button, Typography, Box, useTheme, CircularProgress } from '@mui/material';
+import { Button, Typography, Box, useTheme } from '@mui/material';
 import { confirmSignUpWithAmplify, resendSignUpCodeWithAmplify, autoLoginWithAmplify } from '../../libs/cognitoAuth';
 import { useAuth } from '../../libs/AuthContext';
 import { useRouter } from 'next/navigation';
 import ConfirmationCodeInput from '../components/ConfirmationCodeInput';
+import LoadingOverlay from '../components/LoadingOverlay';
+import { useSnackBar } from '../context/SnackBarContext';
 
 export default function ConfirmSignUp() {
   const [destination, setDestination] = useState('');
   const [code, setCode] = useState('');
-  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const theme = useTheme();
   const { login } = useAuth();
   const router = useRouter();
+  const { showSnackBar } = useSnackBar();
 
   useEffect(() => {
     const destination = localStorage.getItem('confirmSignUpDestination');
@@ -32,24 +34,24 @@ export default function ConfirmSignUp() {
     setLoading(true);
     try {
       await confirmSignUpWithAmplify(destination, code);
-      setMessage('Sign up confirmed successfully!');
+      showSnackBar('Sign up confirmed successfully!', 'success', 5000);
       
       // Attempt to log in the user
       try {
         await autoLoginWithAmplify(); // Note: password is not available here, might need to be handled differently
         login(); // Update the global auth state
-        setMessage('Sign up confirmed and logged in successfully!');
+        showSnackBar('Sign up confirmed and logged in successfully!', 'success', 5000);
         setTimeout(() => {
           router.push('/'); // Redirect to home page after successful login
         }, 2000);
       } catch (loginError) {
-        setMessage('Sign up confirmed successfully. Please log in.');
+        showSnackBar('Sign up confirmed successfully. Please log in.', 'info', 5000);
         setTimeout(() => {
           router.push('/login'); // Redirect to login page if automatic login fails
         }, 2000);
       }
     } catch (error) {
-      setMessage(`Error: ${error.message}`);
+      showSnackBar(`Error: ${error.message}`, 'error', 5000);
     } finally {
       setLoading(false);
     }
@@ -59,9 +61,9 @@ export default function ConfirmSignUp() {
     setLoading(true);
     try {
       await resendSignUpCodeWithAmplify(destination);
-      setMessage('Confirmation code resent. Please check your email or phone.');
+      showSnackBar('Confirmation code resent. Please check your email or phone.', 'success', 5000);
     } catch (error) {
-      setMessage(`Error: ${error.message}`);
+      showSnackBar(`Error: ${error.message}`, 'error', 5000);
     } finally {
       setLoading(false);
     }
@@ -82,6 +84,7 @@ export default function ConfirmSignUp() {
         margin: 'auto',
       }}
     >
+      <LoadingOverlay isLoading={loading} />
       <Typography variant="h4" component="h1" gutterBottom>
         Confirm Sign Up
       </Typography>
@@ -92,7 +95,7 @@ export default function ConfirmSignUp() {
         <Typography variant="body1" gutterBottom>
           Destination: {destination}
         </Typography>
-        <ConfirmationCodeInput onCodeComplete={handleCodeComplete} />
+        <ConfirmationCodeInput onCodeComplete={handleCodeComplete} disabled={loading} />
         <Button
           type="submit"
           fullWidth
@@ -100,7 +103,7 @@ export default function ConfirmSignUp() {
           sx={{ mt: 3, mb: 2 }}
           disabled={loading || code.length !== 6}
         >
-          {loading ? <CircularProgress size={24} /> : 'Confirm Sign Up'}
+          Confirm Sign Up
         </Button>
         <Button
           fullWidth
@@ -109,14 +112,9 @@ export default function ConfirmSignUp() {
           sx={{ mb: 2 }}
           disabled={loading}
         >
-          {loading ? <CircularProgress size={24} /> : 'Resend Code'}
+          Resend Code
         </Button>
       </Box>
-      {message && (
-        <Typography color={message.startsWith('Error') ? 'error' : 'success'}>
-          {message}
-        </Typography>
-      )}
     </Box>
   );
 }
