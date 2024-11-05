@@ -1,6 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { fetchAuthSessionWithAmplify } from './cognitoAuth';
-import { Auth } from 'aws-amplify';
+import { fetchAuthSessionWithAmplify, getCurrentUserWithAmplify } from './cognitoAuth';
 
 const AuthContext = createContext();
 
@@ -11,7 +10,7 @@ export const AuthProvider = ({ children }) => {
 
   const fetchUserData = async () => {
     try {
-      const userData = await Auth.currentAuthenticatedUser();
+      const userData = await getCurrentUserWithAmplify();
       setUser(userData);
       setIsAuthenticated(true);
     } catch (error) {

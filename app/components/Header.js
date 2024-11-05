@@ -31,7 +31,13 @@ const Header = () => {
     { text: 'About', href: '/about', id: 'about' },
     // Dynamic items
     ...(isAuthenticated
-      ? [{ text: 'Sign Out', onClick: handleSignOut, id: 'signout' }]
+      ? [
+          { text: 'Sign Out', onClick: handleSignOut, id: 'signout' },
+          { 
+            component: () => <Avatar avatarUrl={user?.attributes?.picture} />,
+            id: 'avatar'
+          }
+        ]
       : [
           { text: 'Login', href: '/login', id: 'login' },
           { text: 'Sign Up', href: '/signup', id: 'signup' },
@@ -53,11 +59,13 @@ const Header = () => {
     <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
       <List>
         {menuItems.map((item) => (
-          <ListItem key={item.text} onClick={toggleDrawer(false)}>
+          <ListItem key={item.id} onClick={toggleDrawer(false)}>
             {item.href ? (
               <Link href={item.href} passHref style={{ textDecoration: 'none', color: 'inherit' }}>
                 <ListItemText primary={item.text} />
               </Link>
+            ) : item.component ? (
+              item.component()
             ) : (
               <ListItemText primary={item.text} onClick={item.onClick} />
             )}
@@ -108,10 +116,13 @@ const Header = () => {
           </>
         ) : (
           <>
-            {menuItems.map((item) => (
-              item.href ? (
+            {menuItems.map((item) => {
+              if (item.component) {
+                return item.component();
+              }
+              return item.href ? (
                 <Button 
-                  key={item.text} 
+                  key={item.id} 
                   color="inherit" 
                   component={Link} 
                   href={item.href}
@@ -121,22 +132,19 @@ const Header = () => {
                 </Button>
               ) : (
                 <Button 
-                  key={item.text} 
+                  key={item.id} 
                   color="inherit" 
                   onClick={item.onClick}
                   sx={{ mx: 1 }}
                 >
                   {item.text}
                 </Button>
-              )
-            ))}
+              );
+            })}
             <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
               {theme.palette.mode === 'dark' ? <SunIcon /> : <MoonIcon />}
             </IconButton>
           </>
-        )}
-        {isAuthenticated && (
-          <Avatar avatarUrl={user?.attributes?.picture} />
         )}
       </Toolbar>
     </AppBar>
