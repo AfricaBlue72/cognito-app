@@ -7,13 +7,14 @@ import Link from 'next/link';
 import { useColorMode } from '../providers';
 import { signOutWithAmplify } from '../../libs/cognitoAuth';
 import { useAuth } from '../../libs/AuthContext';
+import Avatar from './Avatar';
 
 const Header = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { toggleColorMode } = useColorMode();
-  const { isAuthenticated, isLoading, logout } = useAuth();
+  const { isAuthenticated, isLoading, logout, user } = useAuth();
 
   const handleSignOut = async () => {
     try {
@@ -35,7 +36,7 @@ const Header = () => {
           { text: 'Login', href: '/login', id: 'login' },
           { text: 'Sign Up', href: '/signup', id: 'signup' },
         ]),
-];
+  ];
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -133,6 +134,9 @@ const Header = () => {
               {theme.palette.mode === 'dark' ? <SunIcon /> : <MoonIcon />}
             </IconButton>
           </>
+        )}
+        {isAuthenticated && (
+          <Avatar avatarUrl={user?.attributes?.picture} />
         )}
       </Toolbar>
     </AppBar>

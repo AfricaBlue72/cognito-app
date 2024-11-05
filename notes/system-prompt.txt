@@ -8,14 +8,18 @@
 </system>
 
 <user>
-I want to be able to convey certain items to the user of this web page.
-We currently use an alert but they are tight to the page. It disappears with navigation.
-Is the following possible:
--   Create a SnackBar that always appears at the bottom of the browsing window (i.e. at the bottom of the viewport)
--   This SnackBar must have a soft look in red for errors, orange for warnings and green for information
--   This SnackBar must be able to stay for a certain amount of seconds (configurable)
--   Alternatively the SnackBars stays permanent until the user clicks it away.
--   Can we start by implemnting this for the Login page. Where we remove the Alert and replace this with the SnackBar?
+Once the user has been signed in I want to have an icon in the Header that can show a small avatar.
+- This avatar is round.
+- It can load a small jpeg that shows the avatar of the user
+- If there is no jpeg to load it must show a general avatar
+- Once the user clicks on this avatar it opens a page where the user can change account settings
+Settings incluce:
+- Change password
+- Change email
+- Change attributes like first name, last name, birthdate, avatar URL, etc.
+Can you create this?
+
+Make sure that you do not change any functionality in the existing app. 
 </user>
 
 Once the signup has been done I want you to store the SignUpOutput in local storage.

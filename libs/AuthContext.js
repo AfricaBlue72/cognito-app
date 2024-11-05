@@ -1,20 +1,40 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { fetchAuthSessionWithAmplify } from './cognitoAuth';
+import { Auth } from 'aws-amplify';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState(null);
+
+  const fetchUserData = async () => {
+    try {
+      const userData = await Auth.currentAuthenticatedUser();
+      setUser(userData);
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.log('Error fetching user data:', error);
+      setUser(null);
+      setIsAuthenticated(false);
+    }
+  };
 
   useEffect(() => {
     const checkAuthStatus = async () => {
       try {
         const session = await fetchAuthSessionWithAmplify();
-        setIsAuthenticated(!!session);
+        if (session) {
+          await fetchUserData();
+        } else {
+          setIsAuthenticated(false);
+          setUser(null);
+        }
       } catch (error) {
         console.log('Error checking auth status:', error);
         setIsAuthenticated(false);
+        setUser(null);
       } finally {
         setIsLoading(false);
       }
@@ -23,11 +43,22 @@ export const AuthProvider = ({ children }) => {
     checkAuthStatus();
   }, []);
 
-  const login = () => setIsAuthenticated(true);
-  const logout = () => setIsAuthenticated(false);
+  const login = () => {
+    setIsAuthenticated(true);
+    fetchUserData();
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    setUser(null);
+  };
+
+  const refreshUser = async () => {
+    await fetchUserData();
+  };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isLoading, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isLoading, user, login, logout, refreshUser }}>
       {children}
     </AuthContext.Provider>
   );
