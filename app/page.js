@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Container, Typography, Button, Paper } from '@mui/material';
 import Link from 'next/link';
-import { configureAmplify } from '../libs/cognitoConfig';
+// import { configureAmplify } from '../libs/cognitoConfig';
 import { getCurrentUserWithAmplify, fetchUserAttributesWithAmplify, fetchAuthSessionWithAmplify } from '../libs/cognitoAuth';
 
 export default function Home() {
@@ -13,31 +13,24 @@ export default function Home() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Configure Amplify when the app component mounts
-    try {
-      configureAmplify();
-      console.log('Amplify configuration attempted');
-    } catch (error) {
-      console.error('Error during Amplify configuration:', error);
-      setError('Failed to configure Amplify');
-    }
-
     // Fetch user details, attributes, and auth session
     const fetchUserInfo = async () => {
       try {
+        const session = await fetchAuthSessionWithAmplify(true);
+        setAuthSession(session);
+        
+        if (session) {
         const user = await getCurrentUserWithAmplify();
         setUserDetails(user);
         
-        if (user) {
-          const attributes = await fetchUserAttributesWithAmplify();
-          setUserAttributes(attributes);
-          
-          const session = await fetchAuthSessionWithAmplify();
-          setAuthSession(session);
+          if (user) {
+            const attributes = await fetchUserAttributesWithAmplify();
+            setUserAttributes(attributes);
+          }
         }
       } catch (error) {
-        console.error('Error fetching user information:', error);
-        setError('Failed to fetch user information');
+        console.log('Error fetching user information:', error);
+        setError('No user information');
       }
     };
 

@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import { TextField, Button, IconButton, InputAdornment, Typography, Box, Container, CircularProgress, Link } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { loginWithAmplify } from '../../libs/cognitoAuth';
+import { useAuth } from '../../libs/AuthContext';
+import { useRouter } from 'next/navigation';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -11,6 +13,8 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const { login } = useAuth();
+  const router = useRouter();
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = (event) => event.preventDefault();
@@ -21,8 +25,9 @@ export default function Login() {
     setError('');
     try {
       await loginWithAmplify(username, password);
-      // Handle successful login (e.g., redirect to dashboard)
+      login(); // Update the global auth state
       console.log('Login successful');
+      router.push('/'); // Redirect to home page after successful login
     } catch (err) {
       setError('Login failed. Please check your credentials and try again.');
       console.error('Login error:', err);
@@ -68,19 +73,21 @@ export default function Login() {
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    aria-label="toggle password visibility"
-                    onClick={handleClickShowPassword}
-                    onMouseDown={handleMouseDownPassword}
-                    edge="end"
-                  >
-                    {showPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={handleClickShowPassword}
+                      onMouseDown={handleMouseDownPassword}
+                      edge="end"
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
             }}
           />
           {error && (
@@ -99,10 +106,10 @@ export default function Login() {
           </Button>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mt: 2 }}>
-          <Link href="/forgot-password" variant="body2">
+          <Link variant="body2" onClick={() => router.push('/forgot-password')} sx={{ cursor: 'pointer' }}>
             Forgot Password
           </Link>
-          <Link href="/signup" variant="body2">
+          <Link variant="body2" onClick={() => router.push('/signup')} sx={{ cursor: 'pointer' }}>
             Sign Up
           </Link>
         </Box>

@@ -1,8 +1,15 @@
-import { signIn, signUp, signOut, confirmSignUp, getCurrentUser, resendSignUpCode, fetchAuthSession, fetchUserAttributes } from 'aws-amplify/auth';
-
+import { signIn, signUp, signOut, confirmSignUp, getCurrentUser, resendSignUpCode, fetchAuthSession, fetchUserAttributes, resetPassword, confirmResetPassword } from 'aws-amplify/auth';
 
 export const loginWithAmplify = async (email, password) => {
   try {
+    console.log('Logging in with Amplify...');
+    try {
+      console.log('Trying to sign out...');
+      signOut();
+    } catch (error) {
+      console.log('Error signing out', error);
+    }
+
     const user = await signIn({
       username: email, 
       password: password
@@ -16,9 +23,27 @@ export const loginWithAmplify = async (email, password) => {
   }
 };
 
+export const autoLoginWithAmplify = async () => {
+  try {
+    console.log('Auto logging in with Amplify...');
+    const user = await autoSignIn();
+    console.log('Auto login successful!');
+    return;
+  } catch (error) {
+    console.error('Auto login failed');
+    throw error;
+  }
+};
+
 export const signUpWithAmplify = async (email, password, preferred_username, locale) => {
   try {
-    const { isSignUpComplete, userId, nextStep } = await signUp({
+    try {
+      console.log('Trying to sign out...');
+      signOut();
+    } catch (error) {
+      console.log('Error signing out', error);
+    }
+    const signUpResult = await signUp({
       username: email, // Use email as the username
       password: password,
       options: {
@@ -29,8 +54,8 @@ export const signUpWithAmplify = async (email, password, preferred_username, loc
         },
       }
     });
-    console.log('Sign up successful!', { isSignUpComplete, userId, nextStep });
-    return { isSignUpComplete, userId, nextStep };
+    console.log('Sign up successful!', signUpResult );
+    return signUpResult;
   } catch (error) {
     console.error('Sign up failed', error);
     console.log('Using the following arguments:', { email, password, preferred_username, locale });
@@ -38,11 +63,15 @@ export const signUpWithAmplify = async (email, password, preferred_username, loc
   }
 };
 
-export const confirmSignUpWithAmplify = async (email, code) => {
+export const confirmSignUpWithAmplify = async (destination, code) => {
   try {
-    await confirmSignUp(email, code);
+    await confirmSignUp({
+      username: destination, 
+      confirmationCode: code
+  });
     console.log('Sign up confirmed successfully!');
   } catch (error) {
+    console.log('Using the following arguments:', { email, code });
     console.error('Sign up confirmation failed', error);
     throw error;
   }
@@ -50,8 +79,17 @@ export const confirmSignUpWithAmplify = async (email, code) => {
 
 export const signOutWithAmplify = async () => {
   try {
-    await signOut();
+    await signOut({ global: true });
     console.log('Sign out successful!');
+
+    // Clear all Cognito-related local storage items
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('CognitoIdentityProvider')) {
+        localStorage.removeItem(key);
+      }
+    });
+
+    console.log('Local storage items cleared');
   } catch (error) {
     console.error('Sign out failed', error);
     throw error;
@@ -74,22 +112,20 @@ export const getCurrentUserWithAmplify = async () => {
     console.log('Current user retrieved successfully', currentUser);
     return currentUser;
   } catch (error) {
-    console.error('Failed to get current user', error);
+    console.log('Failed to get current user', error);
     return null;
   }
 };
 
-
-
-export const fetchAuthSessionWithAmplify = async () => {
+export const fetchAuthSessionWithAmplify = async (refresh) => {
   try {
-    const session = await fetchAuthSession();
+    const session = await fetchAuthSession({ forceRefresh: refresh });
     console.log('Auth session fetched successfully', session);
     console.log('IdToken:', session.tokens.idToken);
     console.log('IdToken raw:', session.tokens.idToken.toString());
     return session;
   } catch (error) {
-    console.error('Failed to fetch auth session', error);
+    console.log('Failed to fetch auth session', error);
     throw error;
   }
 };
@@ -100,7 +136,27 @@ export const fetchUserAttributesWithAmplify = async () => {
     console.log('User attributes fetched successfully', attributes);
     return attributes;
   } catch (error) {
-    console.error('Failed to fetch user attributes', error);
+    console.log('Failed to fetch user attributes', error);
+    throw error;
+  }
+};
+
+export const resetPasswordWithAmplify = async (username) => {
+  try {
+    await resetPassword({ username });
+    console.log('Password reset initiated successfully');
+  } catch (error) {
+    console.error('Password reset initiation failed', error);
+    throw error;
+  }
+};
+
+export const confirmResetPasswordWithAmplify = async (username, newPassword, confirmationCode) => {
+  try {
+    await confirmResetPassword({ username, newPassword, confirmationCode });
+    console.log('Password reset confirmed successfully');
+  } catch (error) {
+    console.error('Password reset confirmation failed', error);
     throw error;
   }
 };

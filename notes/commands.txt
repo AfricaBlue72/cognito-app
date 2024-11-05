@@ -1,1 +1,2 @@
+pnpm run build
 aws s3 sync out s3://cognito-app-accept-hosting-eu-west-1-970547379959 --delete

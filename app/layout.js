@@ -1,9 +1,12 @@
 "use client";
 
+import React, { useEffect, useState } from 'react';
+import { configureAmplify } from '../libs/cognitoConfig';
 import localFont from "next/font/local";
 import { Providers } from './providers';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import { AuthProvider } from '../libs/AuthContext';
 import "./globals.css";
 
 const geistSans = localFont({
@@ -17,20 +20,30 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-// export const metadata = {
-//   title: "My Website",
-//   description: "A multi-page website created with Next.js and Material UI",
-// };
-
 export default function RootLayout({ children }) {
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    // Configure Amplify when the app component mounts
+    try {
+      configureAmplify();
+      console.log('Amplify configuration attempted');
+    } catch (error) {
+      console.error('Error during Amplify configuration:', error);
+      setError('Failed to configure Amplify');
+    }
+  }, []);
+
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <Providers>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-        </Providers>
+        <AuthProvider>
+          <Providers>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+          </Providers>
+        </AuthProvider>
       </body>
     </html>
   );

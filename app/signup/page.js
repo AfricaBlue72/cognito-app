@@ -1,14 +1,17 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, TextField, Container, Typography, Box, MenuItem, useTheme, Alert, Link , IconButton, InputAdornment } from '@mui/material';
+import { Button, TextField, Container, Typography, Box, MenuItem, useTheme, Alert, Link, IconButton, InputAdornment } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-// import Link from 'next/link';
 import { signUpWithAmplify } from '../../libs/cognitoAuth';
 import { FlagIcon } from 'react-flag-kit';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../libs/AuthContext';
 
 const SignupPage = () => {
   const theme = useTheme();
+  const router = useRouter();
+  const { login } = useAuth();
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -32,7 +35,6 @@ const SignupPage = () => {
   };
 
   const isEmailLike = (str) => {
-    // Simple regex to check if a string resembles an email address
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str);
   };
 
@@ -47,12 +49,33 @@ const SignupPage = () => {
         if (preferred_username && isEmailLike(preferred_username)) {
           throw new Error('Username cannot be an email address or resemble one.');
         }
-        const { isSignUpComplete, userId, nextStep } = await signUpWithAmplify(email, password, preferred_username, preferredLanguage);
-        console.log('Sign up result:', { isSignUpComplete, userId, nextStep });
-        setSuccess('Sign up successful! You can now log in.');
+        const signUpResult = await signUpWithAmplify(email, password, preferred_username, preferredLanguage);
+        console.log('Sign up result:', signUpResult);
+        
+        // Store the entire signUpResult in local storage
+        localStorage.setItem('signUpResult', JSON.stringify(signUpResult));
+        
+        if (signUpResult.isSignUpComplete) {
+          setSuccess('Sign up successful! You can now log in.');
+          // Optionally redirect to login page
+          // router.push('/login');
+        } else if (signUpResult.nextStep && signUpResult.nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
+          setSuccess('Sign up successful! Please check your email for the confirmation code.');
+          localStorage.setItem('confirmSignUpDestination', email);
+          router.push('/confirm-signup');
+        } else {
+          // Handle any unexpected next steps
+          setError('Unexpected sign up result. Please try again or contact support.');
+        }
       } catch (error) {
         console.error('Signup failed:', error);
-        setError(error.message || 'An error occurred during signup. Please try again.');
+        if (error.name === 'UsernameExistsException') {
+          setError('An account with this email already exists.');
+        } else if (error.name === 'InvalidPasswordException') {
+          setError('Password does not meet the requirements. Please try a stronger password.');
+        } else {
+          setError(error.message || 'An error occurred during signup. Please try again.');
+        }
       }
     } else {
       setError('Please fill in all required fields');
@@ -72,8 +95,12 @@ const SignupPage = () => {
         <Typography component="h1" variant="h2">
           Sign up
         </Typography>
-        {error && <Alert severity="error" sx={{ width: '100%', mt: 2 }}>{error}</Alert>}
-        {success && <Alert severity="success" sx={{ width: '100%', mt: 2 }}>{success}</Alert>}
+        {error && <Alert severity="error" sx={{ width: '100%', mt: 2 }} onClose={() => {}}>{error}</Alert>}
+        {success && (
+          <Alert severity="success" sx={{ width: '100%', mt: 2 }} onClose={() => {}}>
+            {success}
+          </Alert>
+        )}
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
           <TextField
             margin="normal"
@@ -109,7 +136,7 @@ const SignupPage = () => {
             autoComplete="new-password"
             value={formData.password}
             onChange={handleChange}
-            InputProps={{
+            slotProps={{
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
@@ -121,7 +148,7 @@ const SignupPage = () => {
                     {showPassword ? <VisibilityOff /> : <Visibility />}
                   </IconButton>
                 </InputAdornment>
-              ),
+              )
             }}
           />
           <TextField
@@ -165,13 +192,8 @@ const SignupPage = () => {
           </Button>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mt: 2 }}>
-          {/* <Link href="/login" passHref>
-            <MuiLink component="span" variant="body2" sx={{ cursor: 'pointer' }}>
+          <Link variant="body2" onClick={() => router.push('/login')} sx={{ cursor: 'pointer' }}>
             Already have an account? Login
-            </MuiLink>
-          </Link> */}
-          <Link href="/login" variant="body2">
-          Already have an account? Login
           </Link>
         </Box>
       </Box>
