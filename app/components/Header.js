@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from 'react';
-import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem, ListItemText, useMediaQuery, useTheme, CircularProgress } from '@mui/material';
-import { Menu as MenuIcon, Brightness2 as MoonIcon, LightMode as SunIcon, Palette as PaletteIcon } from '@mui/icons-material';
+import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem, ListItemText, useMediaQuery, useTheme, CircularProgress, Menu, MenuItem } from '@mui/material';
+import { Menu as MenuIcon, Palette as PaletteIcon } from '@mui/icons-material';
 import Link from 'next/link';
 import { useTheme as useCustomTheme } from '../themeProvider';
 import { signOutWithAmplify } from '../../libs/cognitoAuth';
@@ -11,6 +11,7 @@ import Avatar from './Avatar';
 
 const Header = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { setTheme } = useCustomTheme();
@@ -25,17 +26,22 @@ const Header = () => {
     }
   };
 
-  const toggleTheme = () => {
-    const currentTheme = theme.palette.mode;
-    const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
-    setTheme(nextTheme);
+  const handleThemeMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleThemeMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleThemeChange = (themeName) => {
+    setTheme(themeName);
+    handleThemeMenuClose();
   };
 
   const menuItems = [
-    // Static items
     { text: 'Home', href: '/', id: 'home' },
     { text: 'About', href: '/about', id: 'about' },
-    // Dynamic items
     ...(isAuthenticated
       ? [
           { text: 'Sign Out', onClick: handleSignOut, id: 'signout' },
@@ -78,10 +84,11 @@ const Header = () => {
           </ListItem>
         ))}
         {isMobile && (
-          <ListItem onClick={() => { toggleTheme(); toggleDrawer(false)(); }}>
+          <ListItem onClick={handleThemeMenuOpen}>
             <IconButton color="inherit">
               <PaletteIcon />
             </IconButton>
+            <ListItemText primary="Change Theme" />
           </ListItem>
         )}
       </List>
@@ -147,11 +154,21 @@ const Header = () => {
                 </Button>
               );
             })}
-            <IconButton sx={{ ml: 1 }} onClick={toggleTheme} color="inherit">
+            <IconButton sx={{ ml: 1 }} onClick={handleThemeMenuOpen} color="inherit">
               <PaletteIcon />
             </IconButton>
           </>
         )}
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleThemeMenuClose}
+        >
+          <MenuItem onClick={() => handleThemeChange('light')}>Light Theme</MenuItem>
+          <MenuItem onClick={() => handleThemeChange('dark')}>Dark Theme</MenuItem>
+          <MenuItem onClick={() => handleThemeChange('materialKit')}>Material Kit Theme</MenuItem>
+          <MenuItem onClick={() => handleThemeChange('visionUI')}>Vision UI Theme</MenuItem>
+        </Menu>
       </Toolbar>
     </AppBar>
   );
