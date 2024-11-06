@@ -5,7 +5,7 @@ export const loginWithAmplify = async (email, password) => {
     console.log('Logging in with Amplify...');
     try {
       console.log('Trying to sign out...');
-      signOut();
+      await signOutWithAmplify(false);
     } catch (error) {
       console.log('Error signing out', error);
     }
@@ -39,7 +39,7 @@ export const signUpWithAmplify = async (email, password, preferred_username, loc
   try {
     try {
       console.log('Trying to sign out...');
-      signOut();
+      await signOutWithAmplify(false);
     } catch (error) {
       console.log('Error signing out', error);
     }
@@ -77,9 +77,9 @@ export const confirmSignUpWithAmplify = async (destination, code) => {
   }
 };
 
-export const signOutWithAmplify = async () => {
+export const signOutWithAmplify = async (global = true) => {
   try {
-    await signOut({ global: true });
+    await signOut({ global: global });
     console.log('Sign out successful!');
 
     // Clear all Cognito-related local storage items

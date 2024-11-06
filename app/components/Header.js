@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem, ListItemText, useMediaQuery, useTheme, CircularProgress } from '@mui/material';
-import { Menu as MenuIcon, Brightness2 as MoonIcon, LightMode as SunIcon } from '@mui/icons-material';
+import { Menu as MenuIcon, Brightness2 as MoonIcon, LightMode as SunIcon, Palette as PaletteIcon } from '@mui/icons-material';
 import Link from 'next/link';
-import { useColorMode } from '../providers';
+import { useTheme as useCustomTheme } from '../themeProvider';
 import { signOutWithAmplify } from '../../libs/cognitoAuth';
 import { useAuth } from '../../libs/AuthContext';
 import Avatar from './Avatar';
@@ -13,7 +13,7 @@ const Header = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const { toggleColorMode } = useColorMode();
+  const { setTheme } = useCustomTheme();
   const { isAuthenticated, isLoading, logout, user } = useAuth();
 
   const handleSignOut = async () => {
@@ -23,6 +23,12 @@ const Header = () => {
     } catch (error) {
       console.error('Error signing out:', error);
     }
+  };
+
+  const toggleTheme = () => {
+    const currentTheme = theme.palette.mode;
+    const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+    setTheme(nextTheme);
   };
 
   const menuItems = [
@@ -72,9 +78,9 @@ const Header = () => {
           </ListItem>
         ))}
         {isMobile && (
-          <ListItem onClick={() => { toggleColorMode(); toggleDrawer(false)(); }}>
+          <ListItem onClick={() => { toggleTheme(); toggleDrawer(false)(); }}>
             <IconButton color="inherit">
-              {theme.palette.mode === 'dark' ? <SunIcon /> : <MoonIcon />}
+              <PaletteIcon />
             </IconButton>
           </ListItem>
         )}
@@ -141,8 +147,8 @@ const Header = () => {
                 </Button>
               );
             })}
-            <IconButton sx={{ ml: 1 }} onClick={toggleColorMode} color="inherit">
-              {theme.palette.mode === 'dark' ? <SunIcon /> : <MoonIcon />}
+            <IconButton sx={{ ml: 1 }} onClick={toggleTheme} color="inherit">
+              <PaletteIcon />
             </IconButton>
           </>
         )}

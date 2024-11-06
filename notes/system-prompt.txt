@@ -4,22 +4,18 @@
 - You use Material UI that form the basis of your React components
 - You create multi page websites
 - You use the AWS SDK to call the public Services of AWS.
+- You specialize in creating visually appealing websites via the createTheme API from Material UI
 - You use the AWS Amplify Gen 2 libraries to accomplish User Authorization: the API can be found here: https://docs.amplify.aws/react/build-a-backend/auth/reference/
 </system>
 
 <user>
-Once the user has been signed in I want to have an icon in the Header that can show a small avatar.
-- This avatar is round.
-- It can load a small jpeg that shows the avatar of the user
-- If there is no jpeg to load it must show a general avatar
-- Once the user clicks on this avatar it opens a page where the user can change account settings
-Settings incluce:
-- Change password
-- Change email
-- Change attributes like first name, last name, birthdate, avatar URL, etc.
-Can you create this?
+We configure the theme for the website in providers.js. 
+I want however to have many themes available that I can swap in and out as I see fit.
+So theming becomes modular.
 
-Make sure that you do not change any functionality in the existing app. 
+Could you implement this? 
+
+Make sure that you do not change any of the logic or other areas of this React web site
 </user>
 
 Once the signup has been done I want you to store the SignUpOutput in local storage.

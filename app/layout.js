@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { configureAmplify } from '../libs/cognitoConfig';
 import localFont from "next/font/local";
-import { Providers } from './providers';
+import { Providers } from './themeProvider';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { AuthProvider } from '../libs/AuthContext';
