@@ -52,19 +52,14 @@ export const darkTheme = {
     MuiButton: {
       styleOverrides: {
         root: {
-          background: 'transparent',
+          background: `linear-gradient(90deg, ${SOLANA_PURPLE} 0%, ${SOLANA_GREEN} 100%)`,
           color: '#FFFFFF',
           borderRadius: '8px',
-          padding: '6px 14px',
-          border: '2px solid transparent',
-          backgroundImage: `linear-gradient(${SOLANA_DARK}, ${SOLANA_DARK}), linear-gradient(90deg, ${SOLANA_PURPLE}, ${SOLANA_GREEN})`,
-          backgroundOrigin: 'border-box',
-          backgroundClip: 'padding-box, border-box',
-          transition: 'all 0.3s ease-in-out',
+          padding: '8px 16px',
           '&:hover': {
-            background: `linear-gradient(90deg, ${SOLANA_PURPLE}33, ${SOLANA_GREEN}33)`,
+            background: `linear-gradient(90deg, ${SOLANA_PURPLE} 20%, ${SOLANA_GREEN} 80%)`,
             boxShadow: '0 0 20px rgba(153, 69, 255, 0.4)',
-          }
+          },
         },
       },
     },
