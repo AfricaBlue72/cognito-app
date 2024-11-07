@@ -8,14 +8,17 @@ import { useTheme as useCustomTheme } from '../themeProvider';
 import { signOutWithAmplify } from '../../libs/cognitoAuth';
 import { useAuth } from '../../libs/AuthContext';
 import Avatar from './Avatar';
+import { useTranslation } from 'react-i18next';
 
 const Header = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
+  const [languageAnchorEl, setLanguageAnchorEl] = useState(null);
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { setTheme } = useCustomTheme();
   const { isAuthenticated, isLoading, logout, user } = useAuth();
+  const { t, i18n } = useTranslation();
 
   const handleSignOut = async () => {
     try {
@@ -39,20 +42,33 @@ const Header = () => {
     handleThemeMenuClose();
   };
 
+  const handleLanguageMenuOpen = (event) => {
+    setLanguageAnchorEl(event.currentTarget);
+  };
+
+  const handleLanguageMenuClose = () => {
+    setLanguageAnchorEl(null);
+  };
+
+  const changeLanguage = (lng) => {
+    i18n.changeLanguage(lng);
+    handleLanguageMenuClose();
+  };
+
   const menuItems = [
-    { text: 'Home', href: '/', id: 'home' },
-    { text: 'About', href: '/about', id: 'about' },
+    { text: t('Home'), href: '/', id: 'home' },
+    { text: t('About'), href: '/about', id: 'about' },
     ...(isAuthenticated
       ? [
-          { text: 'Sign Out', onClick: handleSignOut, id: 'signout' },
+          { text: t('Sign Out'), onClick: handleSignOut, id: 'signout' },
           { 
             component: () => <Avatar avatarUrl={user?.attributes?.picture} />,
             id: 'avatar'
           }
         ]
       : [
-          { text: 'Login', href: '/login', id: 'login' },
-          { text: 'Sign Up', href: '/signup', id: 'signup' },
+          { text: t('Login'), href: '/login', id: 'login' },
+          { text: t('Sign Up'), href: '/signup', id: 'signup' },
         ]),
   ];
 
@@ -84,12 +100,19 @@ const Header = () => {
           </ListItem>
         ))}
         {isMobile && (
-          <ListItem onClick={handleThemeMenuOpen}>
-            <IconButton color="inherit">
-              <PaletteIcon />
-            </IconButton>
-            <ListItemText primary="Change Theme" />
-          </ListItem>
+          <>
+            <ListItem>
+              <IconButton color="inherit" onClick={handleThemeMenuOpen}>
+                <PaletteIcon />
+              </IconButton>
+              <ListItemText primary={t('Change Theme')} />
+            </ListItem>
+            <ListItem>
+              <Button color="inherit" onClick={handleLanguageMenuOpen}>
+                {i18n.language.toUpperCase()}
+              </Button>
+            </ListItem>
+          </>
         )}
       </List>
     </Drawer>
@@ -100,7 +123,7 @@ const Header = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography component="h1" variant="h2" sx={{ flexGrow: 1 }}>
-            My Website
+            {t('My Website')}
           </Typography>
           <CircularProgress color="inherit" size={24} />
         </Toolbar>
@@ -112,7 +135,7 @@ const Header = () => {
     <AppBar position="static">
       <Toolbar>
         <Typography component="h1" variant="h2" sx={{ flexGrow: 1 }}>
-          My Website
+          {t('My Website')}
         </Typography>
         {isMobile ? (
           <>
@@ -157,6 +180,9 @@ const Header = () => {
             <IconButton sx={{ ml: 1 }} onClick={handleThemeMenuOpen} color="inherit">
               <PaletteIcon />
             </IconButton>
+            <Button sx={{ ml: 1 }} onClick={handleLanguageMenuOpen} color="inherit">
+              {i18n.language.toUpperCase()}
+            </Button>
           </>
         )}
         <Menu
@@ -164,10 +190,22 @@ const Header = () => {
           open={Boolean(anchorEl)}
           onClose={handleThemeMenuClose}
         >
-          <MenuItem onClick={() => handleThemeChange('light')}>Light Theme</MenuItem>
-          <MenuItem onClick={() => handleThemeChange('dark')}>Dark Theme</MenuItem>
-          <MenuItem onClick={() => handleThemeChange('materialKit')}>Material Kit Theme</MenuItem>
-          <MenuItem onClick={() => handleThemeChange('visionUI')}>Vision UI Theme</MenuItem>
+          <MenuItem onClick={() => handleThemeChange('light')}>{t('Light Theme')}</MenuItem>
+          <MenuItem onClick={() => handleThemeChange('dark')}>{t('Dark Theme')}</MenuItem>
+          <MenuItem onClick={() => handleThemeChange('materialKit')}>{t('Material Kit Theme')}</MenuItem>
+          <MenuItem onClick={() => handleThemeChange('visionUI')}>{t('Vision UI Theme')}</MenuItem>
+        </Menu>
+        <Menu
+          anchorEl={languageAnchorEl}
+          open={Boolean(languageAnchorEl)}
+          onClose={handleLanguageMenuClose}
+        >
+          <MenuItem onClick={() => changeLanguage('en')}>
+            English
+          </MenuItem>
+          <MenuItem onClick={() => changeLanguage('fr')}>
+            Français
+          </MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>

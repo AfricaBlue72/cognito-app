@@ -2,7 +2,7 @@
 {
     "welcome": "Welcome to my translated Website V2",
     "description": "Discover amazing english content and services tailored just for you. We're here to make your online experience better.",
-    "userdetails": "English User Details:",
-    "nouser": "There is no english user currently signed in."
+    "user-details": "English User Details:",
+    "no-user": "There is no english user currently signed in."
 
 }

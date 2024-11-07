@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from 'react';
 import { Box, Container, Typography, Button, Paper } from '@mui/material';
 import Link from 'next/link';
-// import { configureAmplify } from '../libs/cognitoConfig';
 import { getCurrentUserWithAmplify, fetchUserAttributesWithAmplify, fetchAuthSessionWithAmplify } from '../libs/cognitoAuth';
 
 import { useTranslation } from 'react-i18next';
@@ -13,7 +12,7 @@ export default function Home() {
   const [userAttributes, setUserAttributes] = useState(null);
   const [authSession, setAuthSession] = useState(null);
   const [error, setError] = useState(null);
-  const { t, i18n } = useTranslation(['global', 'home']);
+  const { t } = useTranslation(['global', 'home']);
 
   useEffect(() => {
     // Fetch user details, attributes, and auth session
@@ -75,14 +74,14 @@ export default function Home() {
         </Typography>
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
           <Button variant="contained" color="primary" component={Link} href="/about">
-          {t('global:learnmore')}
+            {t('global:learn-more')}
           </Button>
         </Box>
         
         <Box sx={{ mt: 4 }}>
           <Paper elevation={3} sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
-             {t('home:userdetails')}
+             {t('home:user-details')}
             </Typography>
             {error ? (
               <Typography color="error">{error}</Typography>
