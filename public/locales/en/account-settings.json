@@ -1,0 +1,19 @@
+{
+  "title": "Account Settings",
+  "change-password": "Change Password",
+  "current-password": "Current Password",
+  "new-password": "New Password",
+  "confirm-new-password": "Confirm New Password",
+  "update-password": "Update Password",
+  "change-email": "Change Email",
+  "new-email": "New Email",
+  "update-email": "Update Email",
+  "delete-account": "Delete Account",
+  "delete-account-warning": "Are you sure you want to delete your account? This action cannot be undone.",
+  "confirm-delete": "Yes, delete my account",
+  "cancel": "Cancel",
+  "password-updated": "Password updated successfully",
+  "email-updated": "Email updated successfully",
+  "account-deleted": "Account deleted successfully",
+  "error-occurred": "An error occurred. Please try again."
+}

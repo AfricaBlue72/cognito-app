@@ -18,7 +18,7 @@ const Header = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const { setTheme } = useCustomTheme();
   const { isAuthenticated, isLoading, logout, user } = useAuth();
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(['header', 'global']);
 
   const handleSignOut = async () => {
     try {
@@ -56,19 +56,19 @@ const Header = () => {
   };
 
   const menuItems = [
-    { text: t('Home'), href: '/', id: 'home' },
-    { text: t('About'), href: '/about', id: 'about' },
+    { text: t('header:home'), href: '/', id: 'home' },
+    { text: t('header:about'), href: '/about', id: 'about' },
     ...(isAuthenticated
       ? [
-          { text: t('Sign Out'), onClick: handleSignOut, id: 'signout' },
+          { text: t('header:logout'), onClick: handleSignOut, id: 'signout' },
           { 
             component: () => <Avatar avatarUrl={user?.attributes?.picture} />,
             id: 'avatar'
           }
         ]
       : [
-          { text: t('Login'), href: '/login', id: 'login' },
-          { text: t('Sign Up'), href: '/signup', id: 'signup' },
+          { text: t('header:login'), href: '/login', id: 'login' },
+          { text: t('header:signup'), href: '/signup', id: 'signup' },
         ]),
   ];
 
@@ -105,7 +105,7 @@ const Header = () => {
               <IconButton color="inherit" onClick={handleThemeMenuOpen}>
                 <PaletteIcon />
               </IconButton>
-              <ListItemText primary={t('Change Theme')} />
+              <ListItemText primary={t('global:change-theme')} />
             </ListItem>
             <ListItem>
               <Button color="inherit" onClick={handleLanguageMenuOpen}>
@@ -123,7 +123,7 @@ const Header = () => {
       <AppBar position="static">
         <Toolbar>
           <Typography component="h1" variant="h2" sx={{ flexGrow: 1 }}>
-            {t('My Website')}
+            {t('global:my-website')}
           </Typography>
           <CircularProgress color="inherit" size={24} />
         </Toolbar>
@@ -135,7 +135,7 @@ const Header = () => {
     <AppBar position="static">
       <Toolbar>
         <Typography component="h1" variant="h2" sx={{ flexGrow: 1 }}>
-          {t('My Website')}
+          {t('global:my-website')}
         </Typography>
         {isMobile ? (
           <>
@@ -190,10 +190,10 @@ const Header = () => {
           open={Boolean(anchorEl)}
           onClose={handleThemeMenuClose}
         >
-          <MenuItem onClick={() => handleThemeChange('light')}>{t('Light Theme')}</MenuItem>
-          <MenuItem onClick={() => handleThemeChange('dark')}>{t('Dark Theme')}</MenuItem>
-          <MenuItem onClick={() => handleThemeChange('materialKit')}>{t('Material Kit Theme')}</MenuItem>
-          <MenuItem onClick={() => handleThemeChange('visionUI')}>{t('Vision UI Theme')}</MenuItem>
+          <MenuItem onClick={() => handleThemeChange('light')}>{t('global:light-theme')}</MenuItem>
+          <MenuItem onClick={() => handleThemeChange('dark')}>{t('global:dark-theme')}</MenuItem>
+          <MenuItem onClick={() => handleThemeChange('materialKit')}>{t('global:material-kit-theme')}</MenuItem>
+          <MenuItem onClick={() => handleThemeChange('visionUI')}>{t('global:vision-ui-theme')}</MenuItem>
         </Menu>
         <Menu
           anchorEl={languageAnchorEl}

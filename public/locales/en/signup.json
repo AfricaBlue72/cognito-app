@@ -1,0 +1,12 @@
+{
+  "title": "Sign Up",
+  "email": "Email",
+  "password": "Password",
+  "confirm-password": "Confirm Password",
+  "signup-button": "Sign Up",
+  "already-have-account": "Already have an account?",
+  "login": "Login",
+  "password-mismatch": "Passwords do not match",
+  "signup-successful": "Sign up successful. Please check your email for verification.",
+  "signup-failed": "Sign up failed. Please try again."
+}

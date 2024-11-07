@@ -1,5 +1,9 @@
-
 {
-    "learnmore": "Learn More (fr)"
-
+    "learnmore": "En savoir plus",
+    "change-theme": "Changer de thème",
+    "my-website": "Mon site web",
+    "light-theme": "Thème clair",
+    "dark-theme": "Thème sombre",
+    "material-kit-theme": "Thème Material Kit",
+    "vision-ui-theme": "Thème Vision UI"
 }

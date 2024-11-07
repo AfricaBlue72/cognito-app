@@ -1,0 +1,10 @@
+{
+  "title": "Connexion",
+  "email": "Email",
+  "password": "Mot de passe",
+  "login-button": "Se connecter",
+  "forgot-password": "Mot de passe oublié ?",
+  "no-account": "Vous n'avez pas de compte ?",
+  "sign-up": "S'inscrire",
+  "error-message": "Email ou mot de passe invalide"
+}

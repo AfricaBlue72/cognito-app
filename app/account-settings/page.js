@@ -9,9 +9,11 @@ import {
   fetchAuthSessionWithAmplify
 } from '../../libs/cognitoAuth';
 import { updateUserAttributes, changePassword } from 'aws-amplify/auth';
+import { useTranslation } from 'react-i18next';
 
 const AccountSettings = () => {
   const { refreshUser } = useAuth();
+  const { t } = useTranslation('account-settings');
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -73,10 +75,10 @@ const AccountSettings = () => {
       });
 
       await refreshUser();
-      alert('Account settings updated successfully!');
+      alert(t('account-updated'));
     } catch (error) {
       console.error('Error updating account settings:', error);
-      alert('Failed to update account settings. Please try again.');
+      alert(t('update-failed'));
     }
   };
 
@@ -88,14 +90,14 @@ const AccountSettings = () => {
           sx={{ width: 100, height: 100, mb: 2 }}
         />
         <Typography component="h1" variant="h5">
-          Account Settings
+          {t('title')}
         </Typography>
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 3 }}>
           <TextField
             fullWidth
             margin="normal"
             name="email"
-            label="Email"
+            label={t('email')}
             value={formData.email}
             onChange={handleChange}
           />
@@ -103,7 +105,7 @@ const AccountSettings = () => {
             fullWidth
             margin="normal"
             name="password"
-            label="Current Password"
+            label={t('current-password')}
             type="password"
             onChange={handleChange}
           />
@@ -111,7 +113,7 @@ const AccountSettings = () => {
             fullWidth
             margin="normal"
             name="newPassword"
-            label="New Password (optional)"
+            label={t('new-password')}
             type="password"
             onChange={handleChange}
           />
@@ -119,7 +121,7 @@ const AccountSettings = () => {
             fullWidth
             margin="normal"
             name="firstName"
-            label="First Name"
+            label={t('first-name')}
             value={formData.firstName}
             onChange={handleChange}
           />
@@ -127,7 +129,7 @@ const AccountSettings = () => {
             fullWidth
             margin="normal"
             name="lastName"
-            label="Last Name"
+            label={t('last-name')}
             value={formData.lastName}
             onChange={handleChange}
           />
@@ -135,7 +137,7 @@ const AccountSettings = () => {
             fullWidth
             margin="normal"
             name="birthdate"
-            label="Birthdate"
+            label={t('birthdate')}
             type="date"
             value={formData.birthdate}
             onChange={handleChange}
@@ -147,7 +149,7 @@ const AccountSettings = () => {
             fullWidth
             margin="normal"
             name="avatarUrl"
-            label="Avatar URL"
+            label={t('avatar-url')}
             value={formData.avatarUrl}
             onChange={handleChange}
           />
@@ -157,7 +159,7 @@ const AccountSettings = () => {
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
           >
-            Update Settings
+            {t('update-settings')}
           </Button>
         </Box>
       </Box>

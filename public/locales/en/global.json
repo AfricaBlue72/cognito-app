@@ -1,5 +1,9 @@
-
 {
-    "learnmore": "Learn More (en)"
-
+    "learnmore": "Learn More (en)",
+    "change-theme": "Change Theme",
+    "my-website": "My Website",
+    "light-theme": "Light Theme",
+    "dark-theme": "Dark Theme",
+    "material-kit-theme": "Material Kit Theme",
+    "vision-ui-theme": "Vision UI Theme"
 }

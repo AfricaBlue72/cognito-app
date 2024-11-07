@@ -8,6 +8,7 @@ import { useAuth } from '../../libs/AuthContext';
 import { useRouter } from 'next/navigation';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { useSnackBar } from '../context/SnackBarContext';
+import { useTranslation } from 'react-i18next';
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -17,6 +18,7 @@ export default function Login() {
   const { login } = useAuth();
   const router = useRouter();
   const { showSnackBar } = useSnackBar();
+  const { t } = useTranslation('login');
 
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = (event) => event.preventDefault();
@@ -27,10 +29,10 @@ export default function Login() {
     try {
       await loginWithAmplify(username, password);
       login(); // Update the global auth state
-      showSnackBar('Login successful', 'success', 3000);
+      showSnackBar(t('login-successful'), 'success', 3000);
       router.push('/'); // Redirect to home page after successful login
     } catch (err) {
-      showSnackBar('Login failed. Please check your credentials and try again.', 'error', 5000);
+      showSnackBar(t('login-failed'), 'error', 5000);
       console.error('Login error:', err);
     } finally {
       setLoading(false);
@@ -49,7 +51,7 @@ export default function Login() {
         }}
       >
         <Typography component="h1" variant="h2">
-          Login
+          {t('title')}
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
           <TextField
@@ -57,7 +59,7 @@ export default function Login() {
             required
             fullWidth
             id="username"
-            label="Username"
+            label={t('email')}
             name="username"
             autoComplete="username"
             autoFocus
@@ -70,7 +72,7 @@ export default function Login() {
             required
             fullWidth
             name="password"
-            label="Password"
+            label={t('password')}
             type={showPassword ? 'text' : 'password'}
             id="password"
             autoComplete="current-password"
@@ -102,7 +104,7 @@ export default function Login() {
             sx={{ mt: 3, mb: 2 }}
             disabled={loading}
           >
-            Login
+            {t('login-button')}
           </Button>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', width: '100%', mt: 2 }}>
@@ -111,14 +113,14 @@ export default function Login() {
             onClick={() => !loading && router.push('/forgot-password')} 
             sx={{ cursor: loading ? 'default' : 'pointer', pointerEvents: loading ? 'none' : 'auto' }}
           >
-            Forgot Password
+            {t('forgot-password')}
           </Link>
           <Link 
             variant="body2" 
             onClick={() => !loading && router.push('/signup')} 
             sx={{ cursor: loading ? 'default' : 'pointer', pointerEvents: loading ? 'none' : 'auto' }}
           >
-            Sign Up
+            {t('sign-up')}
           </Link>
         </Box>
       </Box>

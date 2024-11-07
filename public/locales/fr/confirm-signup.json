@@ -1,0 +1,12 @@
+{
+  "title": "Confirmer l'inscription",
+  "email": "Email",
+  "confirmation-code": "Code de confirmation",
+  "confirm-button": "Confirmer",
+  "resend-code": "Renvoyer le code",
+  "back-to-signup": "Retour à l'inscription",
+  "confirmation-successful": "Confirmation réussie. Vous pouvez maintenant vous connecter.",
+  "confirmation-failed": "La confirmation a échoué. Veuillez réessayer.",
+  "code-resent": "Code de confirmation renvoyé. Veuillez vérifier votre email.",
+  "resend-failed": "Échec du renvoi du code de confirmation. Veuillez réessayer."
+}

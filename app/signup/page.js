@@ -9,12 +9,14 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '../../libs/AuthContext';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { useSnackBar } from '../context/SnackBarContext';
+import { useTranslation } from 'react-i18next';
 
 const SignupPage = () => {
   const theme = useTheme();
   const router = useRouter();
   const { login } = useAuth();
   const { showSnackBar } = useSnackBar();
+  const { t } = useTranslation(['signup', 'global']);
   const [formData, setFormData] = useState({
     email: '',
     username: '',
@@ -48,7 +50,7 @@ const SignupPage = () => {
       try {
         let preferred_username = username;
         if (preferred_username && isEmailLike(preferred_username)) {
-          throw new Error('Username cannot be an email address or resemble one.');
+          throw new Error(t('username-email-error'));
         }
         const signUpResult = await signUpWithAmplify(email, password, preferred_username, preferredLanguage);
         console.log('Sign up result:', signUpResult);
@@ -56,28 +58,28 @@ const SignupPage = () => {
         localStorage.setItem('signUpResult', JSON.stringify(signUpResult));
         
         if (signUpResult.isSignUpComplete) {
-          showSnackBar('Sign up successful! You can now log in.', 'success', 5000);
+          showSnackBar(t('signup-successful-login'), 'success', 5000);
         } else if (signUpResult.nextStep && signUpResult.nextStep.signUpStep === 'CONFIRM_SIGN_UP') {
-          showSnackBar('Sign up successful! Please check your email for the confirmation code.', 'success', 5000);
+          showSnackBar(t('signup-successful'), 'success', 5000);
           localStorage.setItem('confirmSignUpDestination', email);
           router.push('/confirm-signup');
         } else {
-          showSnackBar('Unexpected sign up result. Please try again or contact support.', 'error', 5000);
+          showSnackBar(t('signup-unexpected'), 'error', 5000);
         }
       } catch (error) {
         console.error('Signup failed:', error);
         if (error.name === 'UsernameExistsException') {
-          showSnackBar('An account with this email already exists.', 'error', 5000);
+          showSnackBar(t('email-exists'), 'error', 5000);
         } else if (error.name === 'InvalidPasswordException') {
-          showSnackBar('Password does not meet the requirements. Please try a stronger password.', 'error', 5000);
+          showSnackBar(t('invalid-password'), 'error', 5000);
         } else {
-          showSnackBar(error.message || 'An error occurred during signup. Please try again.', 'error', 5000);
+          showSnackBar(error.message || t('signup-failed'), 'error', 5000);
         }
       } finally {
         setLoading(false);
       }
     } else {
-      showSnackBar('Please fill in all required fields', 'error', 5000);
+      showSnackBar(t('fill-all-fields'), 'error', 5000);
       setLoading(false);
     }
   };
@@ -94,7 +96,7 @@ const SignupPage = () => {
         }}
       >
         <Typography component="h1" variant="h2">
-          Sign up
+          {t('title')}
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
           <TextField
@@ -102,7 +104,7 @@ const SignupPage = () => {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={t('email')}
             name="email"
             autoComplete="email"
             autoFocus
@@ -114,12 +116,12 @@ const SignupPage = () => {
             margin="normal"
             fullWidth
             id="username"
-            label="Username (optional)"
+            label={t('username')}
             name="username"
             autoComplete="username"
             value={formData.username}
             onChange={handleChange}
-            helperText="Optional. Cannot be an email address or resemble one."
+            helperText={t('username-helper')}
             disabled={loading}
           />
           <TextField
@@ -127,7 +129,7 @@ const SignupPage = () => {
             required
             fullWidth
             name="password"
-            label="Password"
+            label={t('password')}
             type={showPassword ? 'text' : 'password'}
             id="password"
             autoComplete="new-password"
@@ -157,7 +159,7 @@ const SignupPage = () => {
             required
             fullWidth
             name="preferredLanguage"
-            label="Preferred Language"
+            label={t('preferred-language')}
             id="preferredLanguage"
             select
             value={formData.preferredLanguage}
@@ -168,19 +170,19 @@ const SignupPage = () => {
             <MenuItem value="en">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <FlagIcon code="GB" size={16} style={{ marginRight: '8px' }} />
-                English
+                {t('english')}
               </Box>
             </MenuItem>
             <MenuItem value="es">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <FlagIcon code="ES" size={16} style={{ marginRight: '8px' }} />
-                Spanish
+                {t('spanish')}
               </Box>
             </MenuItem>
             <MenuItem value="fr">
               <Box sx={{ display: 'flex', alignItems: 'center' }}>
                 <FlagIcon code="FR" size={16} style={{ marginRight: '8px' }} />
-                French
+                {t('french')}
               </Box>
             </MenuItem>
           </TextField>
@@ -191,7 +193,7 @@ const SignupPage = () => {
             sx={{ mt: 3, mb: 2 }}
             disabled={loading}
           >
-            Sign Up
+            {t('signup-button')}
           </Button>
         </Box>
         <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%', mt: 2 }}>
@@ -200,7 +202,7 @@ const SignupPage = () => {
             onClick={() => !loading && router.push('/login')} 
             sx={{ cursor: loading ? 'default' : 'pointer', pointerEvents: loading ? 'none' : 'auto' }}
           >
-            Already have an account? Login
+            {t('already-have-account')} {t('login')}
           </Link>
         </Box>
       </Box>

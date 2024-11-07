@@ -3,16 +3,19 @@
 import React from 'react';
 import { Box, Container, Typography, IconButton } from '@mui/material';
 import { Facebook, Twitter, Instagram, LinkedIn } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 const Footer = () => {
+  const { t } = useTranslation(['footer', 'global']);
+
   return (
     <Box component="footer" sx={{ bgcolor: 'background.paper', py: 6 }}>
       <Container maxWidth="lg">
         <Typography variant="h6" align="center" gutterBottom>
-          My Website
+          {t('global:my-website')}
         </Typography>
         <Typography variant="subtitle1" align="center" color="text.secondary" component="p">
-          Follow us on social media
+          {t('footer:follow-us')}
         </Typography>
         <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2 }}>
           <IconButton aria-label="Facebook" color="primary">
@@ -29,7 +32,7 @@ const Footer = () => {
           </IconButton>
         </Box>
         <Typography variant="body2" color="text.secondary" align="center" sx={{ mt: 2 }}>
-          © {new Date().getFullYear()} My Website. All rights reserved.
+          {t('footer:copyright', { year: new Date().getFullYear() })}
         </Typography>
       </Container>
     </Box>

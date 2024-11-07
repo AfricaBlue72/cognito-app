@@ -1,0 +1,12 @@
+{
+  "title": "Confirm Sign Up",
+  "email": "Email",
+  "confirmation-code": "Confirmation Code",
+  "confirm-button": "Confirm",
+  "resend-code": "Resend Code",
+  "back-to-signup": "Back to Sign Up",
+  "confirmation-successful": "Confirmation successful. You can now log in.",
+  "confirmation-failed": "Confirmation failed. Please try again.",
+  "code-resent": "Confirmation code resent. Please check your email.",
+  "resend-failed": "Failed to resend confirmation code. Please try again."
+}

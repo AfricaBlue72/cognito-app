@@ -3,8 +3,11 @@
 import React from 'react';
 import { Box, Container, Typography, Paper } from '@mui/material';
 import Grid from '@mui/material/Grid2';
+import { useTranslation } from 'react-i18next';
 
 export default function About() {
+  const { t } = useTranslation('about');
+
   return (
     <Box
       sx={{
@@ -16,39 +19,39 @@ export default function About() {
     >
       <Container maxWidth="lg">
         <Typography variant="h2" align="center" gutterBottom>
-          About Us
+          {t('title')}
         </Typography>
         <Typography variant="h5" align="center" color="text.secondary" >
-          Learn more about our business, goals, and the team behind our success.
+          {t('description')}
         </Typography>
-        <Grid container spacing={4} sx={{ mt: 4 }}>
-          <Grid xs={12} md={4}>
+        <Grid container spacing={4} sx={{ mt: 4 }} direction="column">
+          <Grid xs={12}>
             <Paper elevation={3} sx={{ p: 3 }}>
               <Typography variant="h5" gutterBottom>
-                Our Business
+                {t('our-mission')}
               </Typography>
               <Typography>
-                We are a forward-thinking company dedicated to providing innovative solutions for our clients. Our expertise spans across various industries, allowing us to tackle diverse challenges.
+                {t('mission-statement')}
               </Typography>
             </Paper>
           </Grid>
-          <Grid xs={12} md={4}>
+          <Grid xs={12}>
             <Paper elevation={3} sx={{ p: 3 }}>
               <Typography variant="h5" gutterBottom>
-                Our Goals
+                {t('our-team')}
               </Typography>
               <Typography>
-                We aim to revolutionize the industry by delivering cutting-edge products and services. Our goal is to create sustainable solutions that benefit both our clients and the environment.
+                {t('team-description')}
               </Typography>
             </Paper>
           </Grid>
-          <Grid xs={12} md={4}>
+          <Grid xs={12}>
             <Paper elevation={3} sx={{ p: 3 }}>
               <Typography variant="h5" gutterBottom>
-                Our Team
+                {t('our-values')}
               </Typography>
               <Typography>
-                Our diverse team of experts brings a wealth of knowledge and experience to every project. We foster a culture of collaboration and innovation to deliver the best results for our clients.
+                {t('values-description')}
               </Typography>
             </Paper>
           </Grid>

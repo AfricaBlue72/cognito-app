@@ -6,22 +6,24 @@ import { resetPasswordWithAmplify } from '../../libs/cognitoAuth';
 import { useRouter } from 'next/navigation';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { useSnackBar } from '../context/SnackBarContext';
+import { useTranslation } from 'react-i18next';
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { showSnackBar } = useSnackBar();
+  const { t } = useTranslation('forgot-password');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       await resetPasswordWithAmplify(email);
-      showSnackBar('Password reset initiated. Check your email for further instructions.', 'success', 5000);
+      showSnackBar(t('code-sent'), 'success', 5000);
       router.push('/confirm-forgot-password');
     } catch (err) {
-      showSnackBar('Failed to initiate password reset. Please try again.', 'error', 5000);
+      showSnackBar(t('error-sending-code'), 'error', 5000);
       console.error(err);
     } finally {
       setLoading(false);
@@ -40,7 +42,10 @@ export default function ForgotPassword() {
         }}
       >
         <Typography component="h1" variant="h5">
-          Forgot Password
+          {t('title')}
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 2, mb: 2, textAlign: 'center' }}>
+          {t('instructions')}
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
@@ -48,7 +53,7 @@ export default function ForgotPassword() {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={t('email')}
             name="email"
             autoComplete="email"
             autoFocus
@@ -63,7 +68,15 @@ export default function ForgotPassword() {
             sx={{ mt: 3, mb: 2 }}
             disabled={loading}
           >
-            Reset Password
+            {t('submit')}
+          </Button>
+          <Button
+            fullWidth
+            variant="text"
+            onClick={() => router.push('/login')}
+            disabled={loading}
+          >
+            {t('back-to-login')}
           </Button>
         </Box>
       </Box>

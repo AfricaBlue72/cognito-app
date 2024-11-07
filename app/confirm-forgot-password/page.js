@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import ConfirmationCodeInput from '../components/ConfirmationCodeInput';
 import LoadingOverlay from '../components/LoadingOverlay';
 import { useSnackBar } from '../context/SnackBarContext';
+import { useTranslation } from 'react-i18next';
 
 export default function ConfirmForgotPassword() {
   const [email, setEmail] = useState('');
@@ -17,16 +18,17 @@ export default function ConfirmForgotPassword() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { showSnackBar } = useSnackBar();
+  const { t } = useTranslation('confirm-forgot-password');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
       await confirmResetPasswordWithAmplify(email, newPassword, code);
-      showSnackBar('Password reset successful. You can now log in with your new password.', 'success', 5000);
+      showSnackBar(t('password-reset-success'), 'success', 5000);
       router.push('/login');
     } catch (err) {
-      showSnackBar('Failed to reset password. Please try again.', 'error', 5000);
+      showSnackBar(t('password-reset-error'), 'error', 5000);
       console.error(err);
     } finally {
       setLoading(false);
@@ -53,7 +55,10 @@ export default function ConfirmForgotPassword() {
         }}
       >
         <Typography component="h1" variant="h5">
-          Reset Password
+          {t('title')}
+        </Typography>
+        <Typography variant="body2" sx={{ mt: 2, mb: 2, textAlign: 'center' }}>
+          {t('instructions')}
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
@@ -61,7 +66,7 @@ export default function ConfirmForgotPassword() {
             required
             fullWidth
             id="email"
-            label="Email Address"
+            label={t('email')}
             name="email"
             autoComplete="email"
             autoFocus
@@ -75,7 +80,7 @@ export default function ConfirmForgotPassword() {
             required
             fullWidth
             name="newPassword"
-            label="New Password"
+            label={t('new-password')}
             type={showPassword ? 'text' : 'password'}
             id="newPassword"
             autoComplete="new-password"
@@ -106,7 +111,15 @@ export default function ConfirmForgotPassword() {
             sx={{ mt: 3, mb: 2 }}
             disabled={loading}
           >
-            Confirm Password Reset
+            {t('submit')}
+          </Button>
+          <Button
+            fullWidth
+            variant="text"
+            onClick={() => router.push('/login')}
+            disabled={loading}
+          >
+            {t('back-to-login')}
           </Button>
         </Box>
       </Box>
