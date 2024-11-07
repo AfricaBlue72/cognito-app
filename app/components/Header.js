@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem, ListItemText, useMediaQuery, useTheme, CircularProgress, Menu, MenuItem } from '@mui/material';
 import { Menu as MenuIcon, Palette as PaletteIcon } from '@mui/icons-material';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useTheme as useCustomTheme } from '../themeProvider';
 import { signOutWithAmplify } from '../../libs/cognitoAuth';
 import { useAuth } from '../../libs/AuthContext';
@@ -19,11 +19,13 @@ const Header = () => {
   const { setTheme } = useCustomTheme();
   const { isAuthenticated, isLoading, logout, user } = useAuth();
   const { t, i18n } = useTranslation(['header', 'global']);
+  const router = useRouter();
 
   const handleSignOut = async () => {
     try {
       await signOutWithAmplify();
       logout();
+      router.push('/');
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -83,19 +85,20 @@ const Header = () => {
     setDrawerOpen(open);
   };
 
+  const handleNavigation = (href) => {
+    router.push(href);
+    setDrawerOpen(false);
+  };
+
   const drawer = (
     <Drawer anchor="right" open={drawerOpen} onClose={toggleDrawer(false)}>
       <List>
         {menuItems.map((item) => (
-          <ListItem key={item.id} onClick={toggleDrawer(false)}>
-            {item.href ? (
-              <Link href={item.href} passHref style={{ textDecoration: 'none', color: 'inherit' }}>
-                <ListItemText primary={item.text} />
-              </Link>
-            ) : item.component ? (
+          <ListItem key={item.id} onClick={item.href ? () => handleNavigation(item.href) : item.onClick}>
+            {item.component ? (
               item.component()
             ) : (
-              <ListItemText primary={item.text} onClick={item.onClick} />
+              <ListItemText primary={item.text} />
             )}
           </ListItem>
         ))}
@@ -156,21 +159,11 @@ const Header = () => {
               if (item.component) {
                 return item.component();
               }
-              return item.href ? (
+              return (
                 <Button 
                   key={item.id} 
                   color="inherit" 
-                  component={Link} 
-                  href={item.href}
-                  sx={{ mx: 1 }}
-                >
-                  {item.text}
-                </Button>
-              ) : (
-                <Button 
-                  key={item.id} 
-                  color="inherit" 
-                  onClick={item.onClick}
+                  onClick={item.href ? () => router.push(item.href) : item.onClick}
                   sx={{ mx: 1 }}
                 >
                   {item.text}
