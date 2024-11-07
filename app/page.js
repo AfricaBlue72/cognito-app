@@ -6,11 +6,14 @@ import Link from 'next/link';
 // import { configureAmplify } from '../libs/cognitoConfig';
 import { getCurrentUserWithAmplify, fetchUserAttributesWithAmplify, fetchAuthSessionWithAmplify } from '../libs/cognitoAuth';
 
+import { useTranslation } from 'react-i18next';
+
 export default function Home() {
   const [userDetails, setUserDetails] = useState(null);
   const [userAttributes, setUserAttributes] = useState(null);
   const [authSession, setAuthSession] = useState(null);
   const [error, setError] = useState(null);
+  const { t, i18n } = useTranslation(['global', 'home']);
 
   useEffect(() => {
     // Fetch user details, attributes, and auth session
@@ -65,21 +68,21 @@ export default function Home() {
           color="text.primary"
           gutterBottom
         >
-          Welcome to My Website
+          {t('home:welcome')}
         </Typography>
         <Typography variant="h5" align="center" color="text.secondary" paragraph>
-          Discover amazing content and services tailored just for you. We're here to make your online experience better.
+          {t('description')}
         </Typography>
         <Box sx={{ mt: 4, display: 'flex', justifyContent: 'center' }}>
           <Button variant="contained" color="primary" component={Link} href="/about">
-            Learn More
+          {t('global:learnmore')}
           </Button>
         </Box>
         
         <Box sx={{ mt: 4 }}>
           <Paper elevation={3} sx={{ p: 3 }}>
             <Typography variant="h6" gutterBottom>
-              User Details:
+             {t('home:userdetails')}
             </Typography>
             {error ? (
               <Typography color="error">{error}</Typography>
@@ -98,7 +101,7 @@ export default function Home() {
                 {authSession ? renderJsonObject(authSession) : <Typography>Loading auth session...</Typography>}
               </Box>
             ) : (
-              <Typography>There is no user currently signed in.</Typography>
+              <Typography>{t('nouser')}</Typography>
             )}
           </Paper>
         </Box>

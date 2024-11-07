@@ -10,6 +10,9 @@ import { AuthProvider } from '../libs/AuthContext';
 import { SnackBarProvider } from './context/SnackBarContext';
 import "./globals.css";
 
+import { I18nextProvider } from 'react-i18next';
+import i18n from '../i18next';
+
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -38,6 +41,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <I18nextProvider i18n={i18n}>
         <AuthProvider>
           <Providers>
             <SnackBarProvider>
@@ -47,6 +51,7 @@ export default function RootLayout({ children }) {
             </SnackBarProvider>
           </Providers>
         </AuthProvider>
+      </I18nextProvider>
       </body>
     </html>
   );
