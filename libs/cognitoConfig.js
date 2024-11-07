@@ -6,9 +6,9 @@ import { CookieStorage } from 'aws-amplify/utils';
 const amplifyConfig = {
   Auth: {
     Cognito: {
-      userPoolId: 'eu-west-1_Q4KoMg9hb',
-      userPoolClientId: '7p3nchhf3ufmfeegv6kjs63r6s',
-      identityPoolId: 'eu-west-1:b836a443-3051-406e-96e7-a90f3a289faa',
+      userPoolId: 'eu-west-1_hwvQBj1jO',
+      userPoolClientId: '685dukda1oam836d07arlmdfqe',
+      identityPoolId: 'eu-west-1:6fb8d0c7-5659-49c9-8acb-aaed730ecc75',
       loginWith: {
         email: true,
       },
