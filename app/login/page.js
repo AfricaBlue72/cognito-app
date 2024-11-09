@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState } from 'react';
-import { TextField, Button, IconButton, InputAdornment, Typography, Box, Container, Link } from '@mui/material';
+import { TextField, Button, IconButton, InputAdornment, Typography, Box, Container, Link, Divider } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { loginWithAmplify } from '../../libs/cognitoAuth';
-import { useAuth } from '../../libs/AuthContext';
+import { loginWithAmplify, loginWithAmplifyRedirect } from '../../libs/cognitoAuth';
+import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import LoadingOverlay from '../components/LoadingOverlay';
-import { useSnackBar } from '../context/SnackBarContext';
+import { useSnackBar } from '../contexts/SnackBarContext';
 import { useTranslation } from 'react-i18next';
 
 export default function Login() {
@@ -37,6 +37,10 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleGoogleLogin = () => {
+    loginWithAmplifyRedirect('Google');
   };
 
   return (
@@ -123,6 +127,16 @@ export default function Login() {
             {t('sign-up')}
           </Link>
         </Box>
+        <Divider sx={{ width: '100%', my: 2, borderBottomWidth: 3 }} />
+        <Button
+          fullWidth
+          variant="outlined"
+          onClick={handleGoogleLogin}
+          disabled={loading}
+          sx={{ mt: 2 }}
+        >
+          {t('login-with-google')}
+        </Button>
       </Box>
     </Container>
   );

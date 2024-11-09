@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Container, Typography, TextField, Button, Box, Avatar } from '@mui/material';
-import { useAuth } from '../../libs/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import {
   getCurrentUserWithAmplify,
   fetchUserAttributesWithAmplify,

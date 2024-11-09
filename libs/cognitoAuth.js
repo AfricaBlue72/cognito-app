@@ -1,4 +1,4 @@
-import { signIn, signUp, signOut, confirmSignUp, getCurrentUser, resendSignUpCode, fetchAuthSession, fetchUserAttributes, resetPassword, confirmResetPassword } from 'aws-amplify/auth';
+import { signIn, signInWithRedirect, signUp, signOut, confirmSignUp, getCurrentUser, resendSignUpCode, fetchAuthSession, fetchUserAttributes, resetPassword, confirmResetPassword } from 'aws-amplify/auth';
 
 export const loginWithAmplify = async (email, password) => {
   try {
@@ -22,6 +22,25 @@ export const loginWithAmplify = async (email, password) => {
     throw error;
   }
 };
+
+export const loginWithAmplifyRedirect = async (provider) => {
+  try {
+    console.log('Logging in with Amplify using redirect with provider:', provider);
+    try {
+      console.log('Trying to sign out...');
+      await signOutWithAmplify(false);
+    } catch (error) {
+      console.log('Error signing out', error);
+    }
+    await signInWithRedirect({
+      provider: provider
+    });
+    console.log(`Login with ${provider} successful!`);
+  } catch (error) {
+    console.error('Login with provider failed', error);
+    throw error;
+  }
+}
 
 export const autoLoginWithAmplify = async () => {
   try {

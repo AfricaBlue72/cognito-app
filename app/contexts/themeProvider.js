@@ -1,14 +1,14 @@
 "use client";
 
 import React, { createContext, useState, useContext, useMemo, useEffect } from 'react';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider as MUIThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
 // Import all theme files
-import { darkTheme } from './themes/darkTheme';
-import { lightTheme } from './themes/lightTheme';
-import { materialKitTheme } from './themes/materialKitTheme';
-import { visionUITheme } from './themes/visionUITheme';
+import { darkTheme } from '../themes/darkTheme';
+import { lightTheme } from '../themes/lightTheme';
+import { materialKitTheme } from '../themes/materialKitTheme';
+import { visionUITheme } from '../themes/visionUITheme';
 
 const themes = {
   dark: darkTheme,
@@ -21,7 +21,7 @@ const ThemeContext = createContext({ setTheme: () => {} });
 
 export const useTheme = () => useContext(ThemeContext);
 
-export function Providers({ children }) {
+export function ThemeProvider({ children }) {
   const [currentTheme, setCurrentTheme] = useState('materialKit'); // Start with materialKit theme by default
 
   useEffect(() => {
@@ -61,10 +61,10 @@ export function Providers({ children }) {
 
   return (
     <ThemeContext.Provider value={themeContext}>
-      <ThemeProvider theme={theme}>
+      <MUIThemeProvider theme={theme}>
         <CssBaseline />
         {children}
-      </ThemeProvider>
+      </MUIThemeProvider>
     </ThemeContext.Provider>
   );
 }

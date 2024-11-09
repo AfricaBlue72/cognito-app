@@ -3,11 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Typography, Box, useTheme } from '@mui/material';
 import { confirmSignUpWithAmplify, resendSignUpCodeWithAmplify, autoLoginWithAmplify } from '../../libs/cognitoAuth';
-import { useAuth } from '../../libs/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import ConfirmationCodeInput from '../components/ConfirmationCodeInput';
 import LoadingOverlay from '../components/LoadingOverlay';
-import { useSnackBar } from '../context/SnackBarContext';
+import { useSnackBar } from '../contexts/SnackBarContext';
 import { useTranslation } from 'react-i18next';
 
 export default function ConfirmSignUp() {

@@ -5,7 +5,7 @@ import { TextField, Button, Typography, Box, Container } from '@mui/material';
 import { resetPasswordWithAmplify } from '../../libs/cognitoAuth';
 import { useRouter } from 'next/navigation';
 import LoadingOverlay from '../components/LoadingOverlay';
-import { useSnackBar } from '../context/SnackBarContext';
+import { useSnackBar } from '../contexts/SnackBarContext';
 import { useTranslation } from 'react-i18next';
 
 export default function ForgotPassword() {

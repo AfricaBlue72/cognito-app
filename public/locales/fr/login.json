@@ -6,5 +6,6 @@
   "forgot-password": "Mot de passe oublié ?",
   "no-account": "Vous n'avez pas de compte ?",
   "sign-up": "S'inscrire",
-  "error-message": "Email ou mot de passe invalide"
+  "error-message": "Email ou mot de passe invalide",
+  "login-with-google": "Se connecter avec Google"
 }

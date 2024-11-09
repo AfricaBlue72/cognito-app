@@ -6,9 +6,9 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { signUpWithAmplify } from '../../libs/cognitoAuth';
 import { FlagIcon } from 'react-flag-kit';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '../../libs/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import LoadingOverlay from '../components/LoadingOverlay';
-import { useSnackBar } from '../context/SnackBarContext';
+import { useSnackBar } from '../contexts/SnackBarContext';
 import { useTranslation } from 'react-i18next';
 
 const SignupPage = () => {

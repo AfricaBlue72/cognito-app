@@ -3,11 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { configureAmplify } from '../libs/cognitoConfig';
 import localFont from "next/font/local";
-import { Providers } from './themeProvider';
+import { ThemeProvider } from './contexts/themeProvider';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import { AuthProvider } from '../libs/AuthContext';
-import { SnackBarProvider } from './context/SnackBarContext';
+import { AuthProvider } from './contexts/AuthContext';
+import { SnackBarProvider } from './contexts/SnackBarContext';
 import "./globals.css";
 
 import { I18nextProvider } from 'react-i18next';
@@ -43,13 +43,13 @@ export default function RootLayout({ children }) {
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
       <I18nextProvider i18n={i18n}>
         <AuthProvider>
-          <Providers>
+          <ThemeProvider>
             <SnackBarProvider>
               <Header />
               <main>{children}</main>
               <Footer />
             </SnackBarProvider>
-          </Providers>
+          </ThemeProvider>
         </AuthProvider>
       </I18nextProvider>
       </body>

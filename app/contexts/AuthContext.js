@@ -1,5 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { fetchAuthSessionWithAmplify, getCurrentUserWithAmplify } from './cognitoAuth';
+import { fetchAuthSessionWithAmplify, getCurrentUserWithAmplify } from '../../libs/cognitoAuth';
 
 const AuthContext = createContext();
 

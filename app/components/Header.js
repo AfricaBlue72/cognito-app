@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton, Drawer, List, ListItem, ListItemText, useMediaQuery, useTheme, CircularProgress, Menu, MenuItem } from '@mui/material';
 import { Menu as MenuIcon, Palette as PaletteIcon } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
-import { useTheme as useCustomTheme } from '../themeProvider';
+import { useTheme as useCustomTheme } from '../contexts/themeProvider';
 import { signOutWithAmplify } from '../../libs/cognitoAuth';
-import { useAuth } from '../../libs/AuthContext';
+import { useAuth } from '../contexts/AuthContext';
 import Avatar from './Avatar';
 import { useTranslation } from 'react-i18next';
 
