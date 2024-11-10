@@ -39,8 +39,20 @@ export default function Login() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    loginWithAmplifyRedirect('Google');
+  const handleGoogleLogin = (event) => {
+    event.preventDefault();
+    setLoading(true);
+    try {
+      loginWithAmplifyRedirect('Google');
+      login(); // Update the global auth state
+      showSnackBar(t('login-successful'), 'success', 3000);
+      router.push('/'); // Redirect to home page after successful login
+    } catch (err) {
+      showSnackBar(t('login-failed'), 'error', 5000);
+      console.error('Login error:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
