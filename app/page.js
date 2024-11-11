@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from 'react';
+import { configureAmplify } from '../libs/cognitoConfig';
 import { Box, Container, Typography, Button, Paper } from '@mui/material';
 import Link from 'next/link';
 import { getCurrentUserWithAmplify, fetchUserAttributesWithAmplify, fetchAuthSessionWithAmplify } from '../libs/cognitoAuth';
@@ -15,6 +16,15 @@ export default function Home() {
   const { t } = useTranslation(['global', 'home']);
 
   useEffect(() => {
+    console.warn('Home useEffect');
+    // Configure Amplify when the app component mounts
+    try {
+      configureAmplify();
+      console.log('Amplify configuration attempted');
+    } catch (error) {
+      console.error('Error during Amplify configuration:', error);
+      setError('Failed to configure Amplify');
+    }
     // Fetch user details, attributes, and auth session
     const fetchUserInfo = async () => {
       try {
@@ -26,8 +36,13 @@ export default function Home() {
         setUserDetails(user);
         
           if (user) {
-            const attributes = await fetchUserAttributesWithAmplify();
-            setUserAttributes(attributes);
+            try{
+              const attributes = await fetchUserAttributesWithAmplify();
+              setUserAttributes(attributes);
+            }
+            catch (error) {
+              console.log('Error fetching user attributes:', error);
+            }
           }
         }
       } catch (error) {

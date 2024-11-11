@@ -65,6 +65,7 @@ const Header = () => {
           { text: t('header:logout'), onClick: handleSignOut, id: 'signout' },
           { 
             component: () => <Avatar avatarUrl={user?.attributes?.picture} />,
+            href: '/account-settings',
             id: 'avatar'
           }
         ]

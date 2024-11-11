@@ -28,14 +28,15 @@ export default function RootLayout({ children }) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Configure Amplify when the app component mounts
-    try {
-      configureAmplify();
-      console.log('Amplify configuration attempted');
-    } catch (error) {
-      console.error('Error during Amplify configuration:', error);
-      setError('Failed to configure Amplify');
-    }
+    console.warn('RootLayout useEffect');
+    // // Configure Amplify when the app component mounts
+    // try {
+    //   configureAmplify();
+    //   console.log('Amplify configuration attempted');
+    // } catch (error) {
+    //   console.error('Error during Amplify configuration:', error);
+    //   setError('Failed to configure Amplify');
+    // }
   }, []);
 
   return (

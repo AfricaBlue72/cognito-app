@@ -8,7 +8,6 @@ import {
   fetchUserAttributesWithAmplify,
   fetchAuthSessionWithAmplify
 } from '../../libs/cognitoAuth';
-import { updateUserAttributes, changePassword } from 'aws-amplify/auth';
 import { useTranslation } from 'react-i18next';
 
 const AccountSettings = () => {
@@ -55,12 +54,7 @@ const AccountSettings = () => {
     try {
       const session = await fetchAuthSessionWithAmplify();
       
-      if (formData.newPassword) {
-        await changePassword({
-          oldPassword: formData.password,
-          newPassword: formData.newPassword
-        });
-      }
+      
 
       const updatedAttributes = {
         email: formData.email,
@@ -70,9 +64,7 @@ const AccountSettings = () => {
         picture: formData.avatarUrl,
       };
 
-      await updateUserAttributes({
-        attributes: updatedAttributes
-      });
+
 
       await refreshUser();
       alert(t('account-updated'));
