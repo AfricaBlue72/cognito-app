@@ -9,13 +9,11 @@
 </system>
 
 <user>
-We configure the theme for the website in providers.js. 
-I want however to have many themes available that I can swap in and out as I see fit.
-So theming becomes modular.
-
-Could you implement this? 
-
-Make sure that you do not change any of the logic or other areas of this React web site
+I want to create a React component that displays a Candlestick chart. 
+- You do not have to create a component from scratch
+- I want you to use the basic charts from ApexCharts (https://apexcharts.com/)
+- I want the chart to integrate with the themes that are stored in the "themes" folder; you can update export in the various file stored in the "themes" folder.
+- Can you show me an example at the bottom of the about page with some mockup data?
 </user>
 
 Once the signup has been done I want you to store the SignUpOutput in local storage.

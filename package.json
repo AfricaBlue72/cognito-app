@@ -13,10 +13,12 @@
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^6.1.4",
     "@mui/material": "^6.1.4",
+    "apexcharts": "^4.0.0",
     "aws-amplify": "^6.8.0",
     "i18next": "^23.16.4",
     "next": "15.0.2",
     "react": "^18",
+    "react-apexcharts": "^1.5.0",
     "react-dom": "^18",
     "react-flag-kit": "^1.1.1",
     "react-i18next": "^15.1.0"

@@ -4,6 +4,7 @@ import React from 'react';
 import { Box, Container, Typography, Paper } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { useTranslation } from 'react-i18next';
+import CandlestickChart from '../components/CandlestickChart';
 
 export default function About() {
   const { t } = useTranslation('about');
@@ -53,6 +54,16 @@ export default function About() {
               <Typography>
                 {t('values-description')}
               </Typography>
+            </Paper>
+          </Grid>
+          <Grid xs={12}>
+            <Paper elevation={3} sx={{ p: 3 }}>
+              <Typography variant="h5" gutterBottom>
+                Market Overview
+              </Typography>
+              <Box sx={{ mt: 2 }}>
+                <CandlestickChart />
+              </Box>
             </Paper>
           </Grid>
         </Grid>
