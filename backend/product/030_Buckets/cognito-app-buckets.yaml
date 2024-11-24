@@ -74,15 +74,11 @@ Resources:
         ServerSideEncryptionConfiguration:
           - ServerSideEncryptionByDefault:
               SSEAlgorithm: AES256
-      # VersioningConfiguration:
-      #   Status: Enabled
 
   LoggingBucket:
     Type: AWS::S3::Bucket
     Properties:
       BucketName: !Sub ${ProductName}-${Environment}-hosting-logging-${AWS::Region}-${AWS::AccountId}
-      # AccessControl: Private
-      # AccessControl: LogDeliveryWrite
       OwnershipControls:
         Rules:
         - ObjectOwnership: ObjectWriter
@@ -101,7 +97,22 @@ Resources:
           Status: Enabled
           ExpirationInDays: 30
 
-  
+  LambdaArtifactsBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub ${ProductName}-${Environment}-lambda-artifacts-${AWS::Region}-${AWS::AccountId}
+      AccessControl: Private
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
 
 Outputs:
   WebsiteHostingBucketName:
@@ -115,3 +126,9 @@ Outputs:
     Value: !Ref LoggingBucket
     Export:
       Name: !Sub ${ProductName}-${Environment}-hosting-logging-${AWS::Region}-${AWS::AccountId}
+
+  LambdaArtifactsBucketName:
+    Description: Name of the S3 bucket for Lambda artifacts
+    Value: !Ref LambdaArtifactsBucket
+    Export:
+      Name: !Sub ${ProductName}-${Environment}-lambda-artifacts-${AWS::Region}-${AWS::AccountId}

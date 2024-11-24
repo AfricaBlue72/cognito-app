@@ -1,0 +1,48 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: API Gateway deployment, stages and domain configuration
+
+Parameters:
+  DomainName:
+    Type: String
+    Default: api.bluecoast.co.za
+    Description: Domain name for the API Gateway
+  RestApiId:
+    Type: String
+    Description: ID of the REST API
+
+Resources:
+  ApiDeployment:
+    Type: AWS::ApiGateway::Deployment
+    Properties:
+      RestApiId: !Ref RestApiId
+
+  ApiStage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      DeploymentId: !Ref ApiDeployment
+      RestApiId: !Ref RestApiId
+      StageName: prod
+
+  CustomDomainName:
+    Type: AWS::ApiGateway::DomainName
+    Properties:
+      DomainName: !Ref DomainName
+      RegionalCertificateArn: !Sub 'arn:aws:acm:${AWS::Region}:${AWS::AccountId}:certificate/*'
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  BasePathMapping:
+    Type: AWS::ApiGateway::BasePathMapping
+    Properties:
+      DomainName: !Ref DomainName
+      RestApiId: !Ref RestApiId
+      Stage: !Ref ApiStage
+
+Outputs:
+  ApiURL:
+    Description: API Gateway URL
+    Value: !Sub 'https://${RestApiId}.execute-api.${AWS::Region}.amazonaws.com/prod/'
+  ApiDomainName:
+    Description: Custom Domain Name
+    Value: !Ref DomainName

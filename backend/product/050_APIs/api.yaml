@@ -1,0 +1,37 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Core API Gateway definition for Cognito App
+
+Parameters:
+  DomainName:
+    Type: String
+    Default: api.bluecoast.co.za
+    Description: Domain name for the API Gateway
+  ProductName:
+    Type: String
+    Description: Name of the product
+  Environment:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: Environment
+    Description: The environment name from SSM Parameter Store
+
+Resources:
+  RestApi:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: CognitoAppAPI
+      Description: API for Cognito App
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+Outputs:
+  RestApiId:
+    Description: ID of the REST API
+    Value: !Ref RestApi
+    Export:
+      Name: !Sub ${AWS::StackName}-RestApiId
+  RestApiRootResourceId:
+    Description: ID of the REST API's root resource
+    Value: !GetAtt RestApi.RootResourceId
+    Export:
+      Name: !Sub ${AWS::StackName}-RootResourceId
